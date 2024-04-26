@@ -1,0 +1,14 @@
+{
+    "require": {
+        "doctrine/orm": "^2.9",
+        "doctrine/dbal": "^3.1",
+        "symfony/console": "^5.3",
+        "symfony/cache": "^7.0",
+        "doctrine/migrations": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyProject\\": "src/"
+        }
+    }
+}
