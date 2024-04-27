@@ -2,117 +2,88 @@
 namespace MyProject\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="customers")
- */
+#[ORM\Entity]
+#[ORM\Table(name: "customers")]
 class Customer
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: 'string', length: 100)]
     private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=11)
-     */
+    #[ORM\Column(type: 'string', length: 11)]
     private string $cpf;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: 'string', length: 100)]
     private string $email;
 
-    /**
-     * @ORM\Column(type="string", length=8)
-     */
+    #[ORM\Column(type: 'string', length: 8)]
     private string $cep;
 
-    /**
-     * Get the value of name
-     */ 
-    public function getName()
-    {
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $address;
+
+    public function getId(): ?int {
+        return $this->id;
+    }
+
+    public function getName(): string {
         return $this->name;
     }
 
-    /**
-     * Set the value of name
-     *
-     * @return  self
-     */ 
-    public function setName($name)
-    {
+    public function setName(string $name): void {
+        if (empty($name)) {
+            throw new InvalidArgumentException("O nome não pode estar vazio.");
+        }
         $this->name = $name;
-
-        return $this;
     }
 
-    /**
-     * Get the value of cpf
-     */ 
-    public function getCpf()
-    {
+    public function getCpf(): string {
         return $this->cpf;
     }
 
-    /**
-     * Set the value of cpf
-     *
-     * @return  self
-     */ 
-    public function setCpf($cpf)
-    {
+    public function setCpf(string $cpf): void {
+        if (!preg_match("/^\d{3}\.\d{3}\.\d{3}-\d{2}$/", $cpf)) {
+            throw new InvalidArgumentException("CPF inválido. Formato esperado: 000.000.000-00.");
+        }
         $this->cpf = $cpf;
-
-        return $this;
     }
 
-    /**
-     * Get the value of email
-     */ 
-    public function getEmail()
-    {
+    public function getEmail(): string {
         return $this->email;
     }
 
-    /**
-     * Set the value of email
-     *
-     * @return  self
-     */ 
-    public function setEmail($email)
-    {
+    public function setEmail(string $email): void {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException("Endereço de e-mail inválido.");
+        }
         $this->email = $email;
-
-        return $this;
     }
 
-    /**
-     * Get the value of cep
-     */ 
-    public function getCep()
-    {
+    public function getCep(): string {
         return $this->cep;
     }
 
-    /**
-     * Set the value of cep
-     *
-     * @return  self
-     */ 
-    public function setCep($cep)
-    {
+    public function setCep(string $cep): void {
+        if (!preg_match("/^\d{5}-\d{3}$/", $cep)) {
+            throw new InvalidArgumentException("CEP inválido. Formato esperado: 00000-000.");
+        }
         $this->cep = $cep;
+    }
 
-        return $this;
+    public function getAddress(): string {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): void {
+        if (empty($address)) {
+            throw new InvalidArgumentException("O endereço não pode estar vazio.");
+        }
+        $this->address = $address;
     }
 }
