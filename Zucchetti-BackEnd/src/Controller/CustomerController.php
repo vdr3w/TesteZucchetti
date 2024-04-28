@@ -36,4 +36,24 @@ class CustomerController
         http_response_code(201);
         return "Created Customer with ID " . $customer->getId() . "\n";
     }
+
+    public function listCustomers()
+    {
+        $customers = $this->entityManager->getRepository(Customer::class)->findAll();
+        $customerList = [];
+
+        foreach ($customers as $customer) {
+            $customerList[] = [
+                'id' => $customer->getId(),
+                'name' => $customer->getName(),
+                'cpf' => $customer->getCpf(),
+                'email' => $customer->getEmail(),
+                'cep' => $customer->getCep(),
+                'address' => $customer->getAddress()
+            ];
+        }
+
+        header('Content-Type: application/json');
+        return json_encode($customerList);
+    }
 }
