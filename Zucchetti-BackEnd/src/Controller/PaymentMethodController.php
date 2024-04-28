@@ -33,4 +33,21 @@ class PaymentMethodController
         http_response_code(201);
         return "Created Payment Method with ID " . $paymentMethod->getId() . "\n";
     }
+
+    public function listPaymentMethods()
+    {
+        $paymentMethods = $this->entityManager->getRepository(PaymentMethod::class)->findAll();
+        $paymentMethodList = [];
+
+        foreach ($paymentMethods as $paymentMethod) {
+            $paymentMethodList[] = [
+                'id' => $paymentMethod->getId(),
+                'name' => $paymentMethod->getName(),
+                'installments' => $paymentMethod->getInstallments()
+            ];
+        }
+
+        header('Content-Type: application/json');
+        return json_encode($paymentMethodList);
+    }
 }
