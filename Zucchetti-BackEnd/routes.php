@@ -131,6 +131,38 @@ switch ($path) {
         }
         break;
 
+        // Rotas para Sale
+    case '/sale/create':
+        if ($requestMethod == 'POST') {
+            $response = $saleController->createSale();
+            echo $response;
+        }
+        break;
+    case '/sale/list':
+        if ($requestMethod == 'GET') {
+            $response = $saleController->listSales();
+            echo $response;
+        }
+        break;
+    case '/sale/show':
+        if ($requestMethod == 'GET' && isset($_GET['id'])) {
+            $response = $saleController->showSale($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/sale/update':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $saleController->updateSale($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/sale/delete':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $saleController->deleteSale($_GET['id']);
+            echo $response;
+        }
+        break;
+
         //
     default:
         http_response_code(404);
