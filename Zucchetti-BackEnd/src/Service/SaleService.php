@@ -10,18 +10,21 @@ use MyProject\Entity\PaymentMethod;
 use MyProject\Entity\SaleItem;
 use MyProject\Interface\SaleServiceInterface;
 
-class SaleService implements SaleServiceInterface {
+class SaleService implements SaleServiceInterface
+{
     private $entityManager;
     private $saleRepository;
 
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager)
+    {
         $this->entityManager = $entityManager;
         $this->saleRepository = $entityManager->getRepository(Sale::class);
     }
 
-    public function createSale(array $data): array {
-        if (!isset($data['customerId'], $data['paymentMethodId'], $data['items'])) {
-            return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'error' => 'Dados faltando para customerId, paymentMethodId ou items.'])];
+    public function createSale(array $data): array
+    {
+        if (!isset($data['customerId'], $data['paymentMethodId'], $data['items'], $data['installments'])) {
+            return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'error' => 'Dados faltando para customerId, paymentMethodId, items ou installments.'])];
         }
 
         try {
@@ -30,6 +33,10 @@ class SaleService implements SaleServiceInterface {
 
             if (!$customer || !$paymentMethod) {
                 return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => 'Cliente ou método de pagamento não encontrado.'])];
+            }
+
+            if ($paymentMethod->getInstallments() < $data['installments']) {
+                return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'error' => 'Número de parcelas excede o máximo permitido pelo método de pagamento.'])];
             }
 
             $sale = new Sale();
@@ -54,13 +61,23 @@ class SaleService implements SaleServiceInterface {
             $this->entityManager->persist($sale);
             $this->entityManager->flush();
 
-            return ['httpCode' => 201, 'body' => json_encode(['success' => true, 'message' => "Venda criada com sucesso com ID " . $sale->getId() . ", Total: $" . $totalPrice])];
+            $installmentAmount = $totalPrice / $data['installments'];
+
+            return ['httpCode' => 201, 'body' => json_encode([
+                'success' => true,
+                'message' => "Venda criada com sucesso com ID " . $sale->getId() . ", Total: $" . $totalPrice,
+                'installments' => $data['installments'],
+                'installmentAmount' => round($installmentAmount, 2)
+            ])];
         } catch (\Exception $e) {
             return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao criar venda: ' . $e->getMessage()])];
         }
     }
 
-    public function listSales(): array {
+
+
+    public function listSales(): array
+    {
         try {
             $sales = $this->saleRepository->findAll();
             $salesList = [];
@@ -87,7 +104,8 @@ class SaleService implements SaleServiceInterface {
         }
     }
 
-    public function listSalesByCustomer(int $customerId): array {
+    public function listSalesByCustomer(int $customerId): array
+    {
         try {
             $customer = $this->entityManager->find(Customer::class, $customerId);
             if (!$customer) {
@@ -122,7 +140,8 @@ class SaleService implements SaleServiceInterface {
         }
     }
 
-    public function showSale(int $id): array {
+    public function showSale(int $id): array
+    {
         try {
             $sale = $this->saleRepository->find($id);
 
@@ -150,7 +169,8 @@ class SaleService implements SaleServiceInterface {
         }
     }
 
-    public function updateSale(int $id, array $data): array {
+    public function updateSale(int $id, array $data): array
+    {
         try {
             $sale = $this->saleRepository->find($id);
 
@@ -206,7 +226,8 @@ class SaleService implements SaleServiceInterface {
         }
     }
 
-    public function deleteSale(int $id): array {
+    public function deleteSale(int $id): array
+    {
         try {
             $sale = $this->saleRepository->find($id);
 
