@@ -4,15 +4,16 @@ namespace MyProject\Service;
 
 use Doctrine\ORM\EntityManager;
 use MyProject\Entity\Product;
+use MyProject\Interface\ProductServiceInterface;  // Adicionado para garantir que o serviço implemente a interface.
 
-class ProductService {
+class ProductService implements ProductServiceInterface {
     private $entityManager;
 
     public function __construct(EntityManager $entityManager) {
         $this->entityManager = $entityManager;
     }
 
-    public function createProduct(array $data) {
+    public function createProduct(array $data): array {
         if (!isset($data['name'], $data['price'], $data['quantity'])) {
             return ['httpCode' => 400, 'body' => "Missing data for name, price or quantity."];
         }
@@ -32,7 +33,7 @@ class ProductService {
         }
     }
 
-    public function listProducts() {
+    public function listProducts(): array {
         try {
             $products = $this->entityManager->getRepository(Product::class)->findAll();
             $productList = [];
@@ -52,7 +53,7 @@ class ProductService {
         }
     }
 
-    public function showProduct($id) {
+    public function showProduct(int $id): array {
         try {
             $product = $this->entityManager->find(Product::class, $id);
 
@@ -71,7 +72,7 @@ class ProductService {
         }
     }
 
-    public function updateProduct($id, array $data) {
+    public function updateProduct(int $id, array $data): array {
         try {
             $product = $this->entityManager->find(Product::class, $id);
             if (!$product) {
@@ -90,7 +91,7 @@ class ProductService {
         }
     }
 
-    public function deleteProduct($id) {
+    public function deleteProduct(int $id): array {
         try {
             $product = $this->entityManager->find(Product::class, $id);
 
