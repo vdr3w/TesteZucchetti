@@ -89,5 +89,18 @@ class ProductController
         return "Product updated successfully.";
     }
 
+    public function deleteProduct($id)
+    {
+        $product = $this->entityManager->find(Product::class, $id);
 
+        if (!$product) {
+            http_response_code(404);
+            return "No product found.";
+        }
+
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
+
+        return "Deleted product with ID $id.";
+    }
 }
