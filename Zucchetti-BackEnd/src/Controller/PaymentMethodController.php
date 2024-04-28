@@ -50,4 +50,21 @@ class PaymentMethodController
         header('Content-Type: application/json');
         return json_encode($paymentMethodList);
     }
+
+    public function showPaymentMethod($id)
+    {
+        $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
+
+        if (!$paymentMethod) {
+            http_response_code(404);
+            return "No payment method found.";
+        }
+
+        header('Content-Type: application/json');
+        return json_encode([
+            'id' => $paymentMethod->getId(),
+            'name' => $paymentMethod->getName(),
+            'installments' => $paymentMethod->getInstallments()
+        ]);
+    }
 }
