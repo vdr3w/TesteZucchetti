@@ -107,4 +107,19 @@ class CustomerController
 
         return "Customer updated successfully.";
     }
+
+    public function deleteCustomer($id)
+    {
+        $customer = $this->entityManager->find(Customer::class, $id);
+
+        if (!$customer) {
+            http_response_code(404);
+            return "No customer found.";
+        }
+
+        $this->entityManager->remove($customer);
+        $this->entityManager->flush();
+
+        return "Deleted customer with ID $id.";
+    }
 }
