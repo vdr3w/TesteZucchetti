@@ -99,6 +99,38 @@ switch ($path) {
         }
         break;
 
+        // ROTAS PARA PAYMENT METHODS
+    case '/payment-method/create':
+        if ($requestMethod == 'POST') {
+            $response = $paymentMethodController->createPaymentMethod();
+            echo $response;
+        }
+        break;
+    case '/payment-method/list':
+        if ($requestMethod == 'GET') {
+            $response = $paymentMethodController->listPaymentMethods();
+            echo $response;
+        }
+        break;
+    case '/payment-method/show':
+        if ($requestMethod == 'GET' && isset($_GET['id'])) {
+            $response = $paymentMethodController->showPaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/payment-method/update':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $paymentMethodController->updatePaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/payment-method/delete':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $paymentMethodController->deletePaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+
         //
     default:
         http_response_code(404);
