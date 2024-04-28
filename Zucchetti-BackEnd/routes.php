@@ -7,10 +7,12 @@ use MyProject\Controller\ProductController;
 use MyProject\Controller\CustomerController;
 use MyProject\Controller\PaymentMethodController;
 use MyProject\Controller\SaleController;
+use MyProject\Service\ProductService;
 
 
 $entityManager = GetEntityManager();
-$productController = new ProductController($entityManager);
+$productService = new ProductService($entityManager);
+$productController = new ProductController($productService);
 $customerController = new CustomerController($entityManager);
 $paymentMethodController = new PaymentMethodController($entityManager);
 $saleController = new SaleController($entityManager);
