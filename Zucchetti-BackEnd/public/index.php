@@ -1,4 +1,3 @@
 <?php
-echo "Bem-vindo ao meu projeto PHP!<br>";
-echo "Data e hora atual: " . date('d/m/Y H:i:s');
-?>
+// Direcionar todas as requisições através do arquivo de rotas
+require_once __DIR__ . '/../routes.php';
