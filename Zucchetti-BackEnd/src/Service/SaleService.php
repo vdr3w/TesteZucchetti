@@ -21,29 +21,28 @@ class SaleService implements SaleServiceInterface
         $this->saleRepository = $entityManager->getRepository(Sale::class);
     }
 
-    public function createSale(array $data): array
-    {
+    public function createSale(array $data): array {
         if (!isset($data['customerId'], $data['paymentMethodId'], $data['items'], $data['installments'])) {
             return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'error' => 'Dados faltando para customerId, paymentMethodId, items ou installments.'])];
         }
-
+    
         try {
             $customer = $this->entityManager->find(Customer::class, $data['customerId']);
             $paymentMethod = $this->entityManager->find(PaymentMethod::class, $data['paymentMethodId']);
-
+    
             if (!$customer || !$paymentMethod) {
                 return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => 'Cliente ou método de pagamento não encontrado.'])];
             }
-
+    
             if ($paymentMethod->getInstallments() < $data['installments']) {
                 return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'error' => 'Número de parcelas excede o máximo permitido pelo método de pagamento.'])];
             }
-
+    
             $sale = new Sale();
             $sale->setCustomer($customer);
             $sale->setPaymentMethod($paymentMethod);
             $totalPrice = 0;
-
+    
             foreach ($data['items'] as $item) {
                 $product = $this->entityManager->find(Product::class, $item['productId']);
                 if ($product && $product->getQuantity() >= $item['quantity']) {
@@ -57,24 +56,22 @@ class SaleService implements SaleServiceInterface
                     return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => "Produto {$item['productId']} não encontrado ou estoque insuficiente."])];
                 }
             }
-
+    
             $this->entityManager->persist($sale);
             $this->entityManager->flush();
-
+    
             $installmentAmount = $totalPrice / $data['installments'];
-
+            
             return ['httpCode' => 201, 'body' => json_encode([
-                'success' => true,
-                'message' => "Venda criada com sucesso com ID " . $sale->getId() . ", Total: $" . $totalPrice,
+                'success' => true, 
+                'message' => "Venda criada com sucesso com ID " . $sale->getId() . ", Total: $" . number_format($totalPrice, 2),
                 'installments' => $data['installments'],
-                'installmentAmount' => round($installmentAmount, 2)
+                'installmentAmount' => number_format($installmentAmount, 2)
             ])];
         } catch (\Exception $e) {
             return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao criar venda: ' . $e->getMessage()])];
         }
     }
-
-
 
     public function listSales(): array
     {
