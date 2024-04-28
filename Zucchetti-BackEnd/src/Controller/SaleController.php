@@ -62,4 +62,29 @@ class SaleController
         http_response_code(201);
         return "Created Sale with ID " . $sale->getId() . " Total: $" . $totalPrice . "\n";
     }
+
+    public function listSales()
+    {
+        $sales = $this->entityManager->getRepository(Sale::class)->findAll();
+        $salesList = [];
+
+        foreach ($sales as $sale) {
+            $itemsList = array_map(function ($item) {
+                return [
+                    'productId' => $item->getProduct()->getId(),
+                    'quantity' => $item->getQuantity()
+                ];
+            }, $sale->getItems()->toArray());
+
+            $salesList[] = [
+                'id' => $sale->getId(),
+                'customer' => $sale->getCustomer()->getId(),
+                'paymentMethod' => $sale->getPaymentMethod()->getId(),
+                'items' => $itemsList
+            ];
+        }
+
+        header('Content-Type: application/json');
+        return json_encode($salesList);
+    }
 }
