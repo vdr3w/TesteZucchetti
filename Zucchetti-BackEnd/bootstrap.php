@@ -36,3 +36,12 @@ $entityManager = new EntityManager($conn, $config);
 $migrationsConfig = new PhpFile(__DIR__ . '/migrations.php');
 $entityManagerLoader = new ExistingEntityManager($entityManager);
 $dependencyFactory = DependencyFactory::fromEntityManager($migrationsConfig, $entityManagerLoader);
+
+// Função para retornar o EntityManager globalmente
+function GetEntityManager(): EntityManager {
+    global $entityManager;
+    return $entityManager;
+}
+
+// Retornar o EntityManager para ser usado em outros scripts
+return $entityManager;
