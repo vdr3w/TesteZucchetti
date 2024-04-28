@@ -36,4 +36,22 @@ class ProductController
         return "Created Product with ID " . $product->getId() . "\n";
     }
 
+    public function listProducts()
+    {
+        $products = $this->entityManager->getRepository(Product::class)->findAll();
+        $productList = [];
+
+        foreach ($products as $product) {
+            $productList[] = [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+                'quantity' => $product->getQuantity()
+            ];
+        }
+
+        header('Content-Type: application/json');
+        return json_encode($productList);
+    }
+
 }
