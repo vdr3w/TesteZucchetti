@@ -144,6 +144,13 @@ switch ($path) {
             echo $response;
         }
         break;
+    case '/sale/listByCustomer':
+        if ($requestMethod == 'GET' && isset($_GET['customerId'])) {
+            $customerId = $_GET['customerId'];
+            $response = $saleController->listSalesByCustomer($customerId);
+            echo $response;
+        }
+        break;
     case '/sale/show':
         if ($requestMethod == 'GET' && isset($_GET['id'])) {
             $response = $saleController->showSale($_GET['id']);
