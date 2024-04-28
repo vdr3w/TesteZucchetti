@@ -640,7 +640,7 @@ GET /sale/listByCustomer?customerId=1
 ***
 ### ✏️ Atualizar Venda
 
-![Exemplo de Requisição no Insomnia](https://i.imgur.com/7JuPCS1.png)
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/Cnf0jIs.png)
 
 ```http
 POST /sale/update
@@ -656,22 +656,32 @@ POST /sale/update
 **Exemplo de corpo da requisição:**
 
 ```json
-{
-  "id": 1,
-  "customerId": 2,
-  "items": [
-    {"productId": 3, "quantity": 2}
-  ]
-}
+ {
+      "customerId": 6,
+      "paymentMethodId": 1,
+      "items": [
+        {
+          "productId": 7,
+          "quantity": 10
+        },
+        {
+          "productId": 8,
+          "quantity": 20
+        }
+      ],
+      "installments": 4
+ }
 ```
 
 **Exemplo de Resposta Sucesso:**
 
 ```json
-{
-  "success": true,
-  "message": "Venda atualizada com sucesso. Novo Total: $180.00"
-}
+ {
+      "success": true,
+      "message": "Venda criada com sucesso com ID 20, Total: $129.7",
+      "installments": 4,
+      "installmentAmount": 32.43
+ }
 ```
 ***
 ### ❌ Deletar Venda
