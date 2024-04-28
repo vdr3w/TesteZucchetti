@@ -54,4 +54,22 @@ class ProductController
         return json_encode($productList);
     }
 
+    public function showProduct($id)
+    {
+        $product = $this->entityManager->find(Product::class, $id);
+
+        if (!$product) {
+            http_response_code(404);
+            return "No product found.";
+        }
+
+        header('Content-Type: application/json');
+        return json_encode([
+            'id' => $product->getId(),
+            'name' => $product->getName(),
+            'price' => $product->getPrice(),
+            'quantity' => $product->getQuantity()
+        ]);
+    }
+
 }
