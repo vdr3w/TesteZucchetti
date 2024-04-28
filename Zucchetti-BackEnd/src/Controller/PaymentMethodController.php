@@ -89,4 +89,19 @@ class PaymentMethodController
 
         return "Payment method updated successfully.";
     }
+
+    public function deletePaymentMethod($id)
+    {
+        $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
+
+        if (!$paymentMethod) {
+            http_response_code(404);
+            return "No payment method found.";
+        }
+
+        $this->entityManager->remove($paymentMethod);
+        $this->entityManager->flush();
+
+        return "Deleted payment method with ID $id.";
+    }
 }
