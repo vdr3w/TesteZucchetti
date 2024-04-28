@@ -7,10 +7,12 @@ use MyProject\Controller\ProductController;
 use MyProject\Controller\CustomerController;
 use MyProject\Controller\PaymentMethodController;
 use MyProject\Controller\SaleController;
+use MyProject\Service\ProductService;
 
 
 $entityManager = GetEntityManager();
-$productController = new ProductController($entityManager);
+$productService = new ProductService($entityManager);
+$productController = new ProductController($productService);
 $customerController = new CustomerController($entityManager);
 $paymentMethodController = new PaymentMethodController($entityManager);
 $saleController = new SaleController($entityManager);
@@ -95,6 +97,77 @@ switch ($path) {
     case '/customer/delete':
         if ($requestMethod == 'POST' && isset($_GET['id'])) {
             $response = $customerController->deleteCustomer($_GET['id']);
+            echo $response;
+        }
+        break;
+
+        // ROTAS PARA PAYMENT METHODS
+    case '/payment-method/create':
+        if ($requestMethod == 'POST') {
+            $response = $paymentMethodController->createPaymentMethod();
+            echo $response;
+        }
+        break;
+    case '/payment-method/list':
+        if ($requestMethod == 'GET') {
+            $response = $paymentMethodController->listPaymentMethods();
+            echo $response;
+        }
+        break;
+    case '/payment-method/show':
+        if ($requestMethod == 'GET' && isset($_GET['id'])) {
+            $response = $paymentMethodController->showPaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/payment-method/update':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $paymentMethodController->updatePaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/payment-method/delete':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $paymentMethodController->deletePaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+
+        // Rotas para Sale
+    case '/sale/create':
+        if ($requestMethod == 'POST') {
+            $response = $saleController->createSale();
+            echo $response;
+        }
+        break;
+    case '/sale/list':
+        if ($requestMethod == 'GET') {
+            $response = $saleController->listSales();
+            echo $response;
+        }
+        break;
+    case '/sale/listByCustomer':
+        if ($requestMethod == 'GET' && isset($_GET['customerId'])) {
+            $customerId = $_GET['customerId'];
+            $response = $saleController->listSalesByCustomer($customerId);
+            echo $response;
+        }
+        break;
+    case '/sale/show':
+        if ($requestMethod == 'GET' && isset($_GET['id'])) {
+            $response = $saleController->showSale($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/sale/update':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $saleController->updateSale($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/sale/delete':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $saleController->deleteSale($_GET['id']);
             echo $response;
         }
         break;

@@ -33,93 +33,126 @@ class CustomerController
         $this->entityManager->persist($customer);
         $this->entityManager->flush();
 
-        http_response_code(201);
-        return "Created Customer with ID " . $customer->getId() . "\n";
+        try {
+            $this->entityManager->persist($customer);
+            $this->entityManager->flush();
+
+            http_response_code(201);
+            echo json_encode(['success' => true, 'message' => 'Cliente criado com sucesso com ID ' . $customer->getId()]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao criar cliente: ' . $e->getMessage()]);
+        }
     }
 
     public function listCustomers()
     {
-        $customers = $this->entityManager->getRepository(Customer::class)->findAll();
-        $customerList = [];
+        try {
+            $customers = $this->entityManager->getRepository(Customer::class)->findAll();
+            $customerList = [];
 
-        foreach ($customers as $customer) {
-            $customerList[] = [
+            foreach ($customers as $customer) {
+                $customerList[] = [
+                    'id' => $customer->getId(),
+                    'name' => $customer->getName(),
+                    'cpf' => $customer->getCpf(),
+                    'email' => $customer->getEmail(),
+                    'cep' => $customer->getCep(),
+                    'address' => $customer->getAddress()
+                ];
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode($customerList);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao listar clientes: ' . $e->getMessage()]);
+        }
+    }
+
+
+    public function showCustomer($id)
+    {
+        try {
+            $customer = $this->entityManager->find(Customer::class, $id);
+
+            if (!$customer) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Cliente não encontrado.']);
+                return;
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode([
                 'id' => $customer->getId(),
                 'name' => $customer->getName(),
                 'cpf' => $customer->getCpf(),
                 'email' => $customer->getEmail(),
                 'cep' => $customer->getCep(),
                 'address' => $customer->getAddress()
-            ];
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao buscar cliente: ' . $e->getMessage()]);
         }
-
-        header('Content-Type: application/json');
-        return json_encode($customerList);
-    }
-
-    public function showCustomer($id)
-    {
-        $customer = $this->entityManager->find(Customer::class, $id);
-
-        if (!$customer) {
-            http_response_code(404);
-            return "No customer found.";
-        }
-
-        header('Content-Type: application/json');
-        return json_encode([
-            'id' => $customer->getId(),
-            'name' => $customer->getName(),
-            'cpf' => $customer->getCpf(),
-            'email' => $customer->getEmail(),
-            'cep' => $customer->getCep(),
-            'address' => $customer->getAddress()
-        ]);
     }
 
     public function updateCustomer($id)
     {
         $data = json_decode(file_get_contents("php://input"), true);
 
-        $customer = $this->entityManager->find(Customer::class, $id);
-        if (!$customer) {
-            http_response_code(404);
-            return "Customer $id does not exist.";
-        }
+        try {
+            $customer = $this->entityManager->find(Customer::class, $id);
+            if (!$customer) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => "Cliente $id não encontrado."]);
+                return;
+            }
 
-        if (isset($data['name'])) {
-            $customer->setName($data['name']);
-        }
-        if (isset($data['cpf'])) {
-            $customer->setCpf($data['cpf']);
-        }
-        if (isset($data['email'])) {
-            $customer->setEmail($data['email']);
-        }
-        if (isset($data['cep'])) {
-            $customer->setCep($data['cep']);
-        }
-        if (isset($data['address'])) {
-            $customer->setAddress($data['address']);
-        }
+            if (isset($data['name'])) {
+                $customer->setName($data['name']);
+            }
+            if (isset($data['cpf'])) {
+                $customer->setCpf($data['cpf']);
+            }
+            if (isset($data['email'])) {
+                $customer->setEmail($data['email']);
+            }
+            if (isset($data['cep'])) {
+                $customer->setCep($data['cep']);
+            }
+            if (isset($data['address'])) {
+                $customer->setAddress($data['address']);
+            }
 
-        $this->entityManager->flush();
+            $this->entityManager->flush();
 
-        return "Customer updated successfully.";
+            echo json_encode(['success' => true, 'message' => 'Cliente atualizado com sucesso.']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao atualizar cliente: ' . $e->getMessage()]);
+        }
     }
+
 
     public function deleteCustomer($id)
     {
-        $customer = $this->entityManager->find(Customer::class, $id);
+        try {
+            $customer = $this->entityManager->find(Customer::class, $id);
 
-        if (!$customer) {
-            http_response_code(404);
-            return "No customer found.";
+            if (!$customer) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Cliente não encontrado.']);
+                return;
+            }
+
+            $this->entityManager->remove($customer);
+            $this->entityManager->flush();
+
+            echo json_encode(['success' => true, 'message' => 'Cliente excluído com sucesso.']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao excluir cliente: ' . $e->getMessage()]);
         }
-
-        $this->entityManager->remove($customer);
-        $this->entityManager->flush();
-
-        return "Deleted customer with ID $id.";
     }
 }
