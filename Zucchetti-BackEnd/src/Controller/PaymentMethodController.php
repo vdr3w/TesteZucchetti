@@ -67,4 +67,26 @@ class PaymentMethodController
             'installments' => $paymentMethod->getInstallments()
         ]);
     }
+
+    public function updatePaymentMethod($id)
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
+        if (!$paymentMethod) {
+            http_response_code(404);
+            return "Payment method $id does not exist.";
+        }
+
+        if (isset($data['name'])) {
+            $paymentMethod->setName($data['name']);
+        }
+        if (isset($data['installments'])) {
+            $paymentMethod->setInstallments((int) $data['installments']);
+        }
+
+        $this->entityManager->flush();
+
+        return "Payment method updated successfully.";
+    }
 }
