@@ -56,4 +56,24 @@ class CustomerController
         header('Content-Type: application/json');
         return json_encode($customerList);
     }
+
+    public function showCustomer($id)
+    {
+        $customer = $this->entityManager->find(Customer::class, $id);
+
+        if (!$customer) {
+            http_response_code(404);
+            return "No customer found.";
+        }
+
+        header('Content-Type: application/json');
+        return json_encode([
+            'id' => $customer->getId(),
+            'name' => $customer->getName(),
+            'cpf' => $customer->getCpf(),
+            'email' => $customer->getEmail(),
+            'cep' => $customer->getCep(),
+            'address' => $customer->getAddress()
+        ]);
+    }
 }
