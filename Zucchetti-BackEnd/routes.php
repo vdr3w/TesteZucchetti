@@ -6,24 +6,29 @@ require_once 'bootstrap.php';
 use MyProject\Controller\ProductController;
 use MyProject\Controller\CustomerController;
 use MyProject\Controller\PaymentMethodController;
-use MyProject\Controller\SaleController;
+use MyProject\Service\ProductService;
+use MyProject\Service\CustomerService;
+use MyProject\Service\PaymentMethodService;
 
 
 $entityManager = GetEntityManager();
-$productController = new ProductController($entityManager);
-$customerController = new CustomerController($entityManager);
-$paymentMethodController = new PaymentMethodController($entityManager);
-$saleController = new SaleController($entityManager);
 
-// Capturando o corpo da requisição
+// Criando instâncias de serviços
+$productService = new ProductService($entityManager);
+$customerService = new CustomerService($entityManager);
+$paymentMethodService = new PaymentMethodService($entityManager);
+
+// Instanciando os controladores com as interfaces de serviço
+$productController = new ProductController($productService);
+$customerController = new CustomerController($customerService);
+$paymentMethodController = new PaymentMethodController($paymentMethodService);
+
 $inputJSON = file_get_contents('php://input');
 $data = json_decode($inputJSON, true);
 
-// Capturando o método HTTP e o URI da requisição
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $requestURI = $_SERVER['REQUEST_URI'];
 
-// Parse do URI para roteamento
 $parsedUrl = parse_url($requestURI);
 $path = $parsedUrl['path'];
 
@@ -141,13 +146,6 @@ switch ($path) {
     case '/sale/list':
         if ($requestMethod == 'GET') {
             $response = $saleController->listSales();
-            echo $response;
-        }
-        break;
-    case '/sale/listByCustomer':
-        if ($requestMethod == 'GET' && isset($_GET['customerId'])) {
-            $customerId = $_GET['customerId'];
-            $response = $saleController->listSalesByCustomer($customerId);
             echo $response;
         }
         break;
