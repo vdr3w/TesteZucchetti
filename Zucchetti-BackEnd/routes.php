@@ -5,15 +5,22 @@ require_once 'bootstrap.php';
 
 use MyProject\Controller\ProductController;
 use MyProject\Controller\CustomerController;
-use MyProject\Controller\PaymentMethodController;
-use MyProject\Controller\SaleController;
+use MyProject\Service\ProductService;
+use MyProject\Service\CustomerService;
+use MyProject\Interface\ProductServiceInterface;
+use MyProject\Interface\CustomerServiceInterface;
+use Doctrine\ORM\EntityManager;
 
 
 $entityManager = GetEntityManager();
-$productController = new ProductController($entityManager);
-$customerController = new CustomerController($entityManager);
-$paymentMethodController = new PaymentMethodController($entityManager);
-$saleController = new SaleController($entityManager);
+
+// Criando instâncias de serviços
+$productService = new ProductService($entityManager);
+$customerService = new CustomerService($entityManager);
+
+// Instanciando os controladores com as interfaces de serviço
+$productController = new ProductController($productService);
+$customerController = new CustomerController($customerService);
 
 // Capturando o corpo da requisição
 $inputJSON = file_get_contents('php://input');
@@ -127,6 +134,38 @@ switch ($path) {
     case '/payment-method/delete':
         if ($requestMethod == 'POST' && isset($_GET['id'])) {
             $response = $paymentMethodController->deletePaymentMethod($_GET['id']);
+            echo $response;
+        }
+        break;
+
+        // Rotas para Sale
+    case '/sale/create':
+        if ($requestMethod == 'POST') {
+            $response = $saleController->createSale();
+            echo $response;
+        }
+        break;
+    case '/sale/list':
+        if ($requestMethod == 'GET') {
+            $response = $saleController->listSales();
+            echo $response;
+        }
+        break;
+    case '/sale/show':
+        if ($requestMethod == 'GET' && isset($_GET['id'])) {
+            $response = $saleController->showSale($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/sale/update':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $saleController->updateSale($_GET['id']);
+            echo $response;
+        }
+        break;
+    case '/sale/delete':
+        if ($requestMethod == 'POST' && isset($_GET['id'])) {
+            $response = $saleController->deleteSale($_GET['id']);
             echo $response;
         }
         break;
