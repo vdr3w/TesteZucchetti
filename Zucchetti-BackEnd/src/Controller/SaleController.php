@@ -87,4 +87,31 @@ class SaleController
         header('Content-Type: application/json');
         return json_encode($salesList);
     }
+
+    public function showSale($id)
+    {
+        $sale = $this->entityManager->find(Sale::class, $id);
+
+        if (!$sale) {
+            http_response_code(404);
+            return "No sale found.";
+        }
+
+        $itemsList = array_map(function ($item) {
+            return [
+                'productId' => $item->getProduct()->getId(),
+                'quantity' => $item->getQuantity()
+            ];
+        }, $sale->getItems()->toArray());
+
+        $result = [
+            'id' => $sale->getId(),
+            'customer' => $sale->getCustomer()->getId(),
+            'paymentMethod' => $sale->getPaymentMethod()->getId(),
+            'items' => $itemsList
+        ];
+
+        header('Content-Type: application/json');
+        return json_encode($result);
+    }
 }
