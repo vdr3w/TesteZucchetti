@@ -5,17 +5,22 @@ require_once 'bootstrap.php';
 
 use MyProject\Controller\ProductController;
 use MyProject\Controller\CustomerController;
-use MyProject\Controller\PaymentMethodController;
-use MyProject\Controller\SaleController;
 use MyProject\Service\ProductService;
+use MyProject\Service\CustomerService;
+use MyProject\Interface\ProductServiceInterface;
+use MyProject\Interface\CustomerServiceInterface;
+use Doctrine\ORM\EntityManager;
 
 
 $entityManager = GetEntityManager();
+
+// Criando instâncias de serviços
 $productService = new ProductService($entityManager);
+$customerService = new CustomerService($entityManager);
+
+// Instanciando os controladores com as interfaces de serviço
 $productController = new ProductController($productService);
-$customerController = new CustomerController($entityManager);
-$paymentMethodController = new PaymentMethodController($entityManager);
-$saleController = new SaleController($entityManager);
+$customerController = new CustomerController($customerService);
 
 // Capturando o corpo da requisição
 $inputJSON = file_get_contents('php://input');
@@ -143,13 +148,6 @@ switch ($path) {
     case '/sale/list':
         if ($requestMethod == 'GET') {
             $response = $saleController->listSales();
-            echo $response;
-        }
-        break;
-    case '/sale/listByCustomer':
-        if ($requestMethod == 'GET' && isset($_GET['customerId'])) {
-            $customerId = $_GET['customerId'];
-            $response = $saleController->listSalesByCustomer($customerId);
             echo $response;
         }
         break;
