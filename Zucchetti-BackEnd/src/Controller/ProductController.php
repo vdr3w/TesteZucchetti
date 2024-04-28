@@ -123,8 +123,10 @@ class ProductController
 
             $this->entityManager->remove($product);
             $this->entityManager->flush();
-
-            echo json_encode(['success' => true, 'message' => 'Produto excluído com sucesso.']);
+            echo json_encode(['success' => true, 'message' => 'Produto excluído com sucesso com ID ' . $id]);
+        } catch (\Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException $e) {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'error' => 'Item usado em alguma venda e não pode ser deletado.']);
         } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Erro ao excluir produto: ' . $e->getMessage()]);
