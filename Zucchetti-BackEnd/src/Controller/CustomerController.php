@@ -76,4 +76,35 @@ class CustomerController
             'address' => $customer->getAddress()
         ]);
     }
+
+    public function updateCustomer($id)
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $customer = $this->entityManager->find(Customer::class, $id);
+        if (!$customer) {
+            http_response_code(404);
+            return "Customer $id does not exist.";
+        }
+
+        if (isset($data['name'])) {
+            $customer->setName($data['name']);
+        }
+        if (isset($data['cpf'])) {
+            $customer->setCpf($data['cpf']);
+        }
+        if (isset($data['email'])) {
+            $customer->setEmail($data['email']);
+        }
+        if (isset($data['cep'])) {
+            $customer->setCep($data['cep']);
+        }
+        if (isset($data['address'])) {
+            $customer->setAddress($data['address']);
+        }
+
+        $this->entityManager->flush();
+
+        return "Customer updated successfully.";
+    }
 }
