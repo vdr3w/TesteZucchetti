@@ -114,4 +114,62 @@ class SaleController
         header('Content-Type: application/json');
         return json_encode($result);
     }
+
+    public function updateSale($id)
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $sale = $this->entityManager->find(Sale::class, $id);
+
+        if (!$sale) {
+            http_response_code(404);
+            return "Sale $id does not exist.";
+        }
+
+        if (isset($data['customerId'])) {
+            $customer = $this->entityManager->find(Customer::class, $data['customerId']);
+            if ($customer) {
+                $sale->setCustomer($customer);
+            } else {
+                http_response_code(404);
+                return "Customer not found.";
+            }
+        }
+
+        if (isset($data['paymentMethodId'])) {
+            $paymentMethod = $this->entityManager->find(PaymentMethod::class, $data['paymentMethodId']);
+            if ($paymentMethod) {
+                $sale->setPaymentMethod($paymentMethod);
+            } else {
+                http_response_code(404);
+                return "Payment method not found.";
+            }
+        }
+
+        foreach ($sale->getItems() as $item) {
+            $oldProduct = $item->getProduct();
+            $oldProduct->setQuantity($oldProduct->getQuantity() + $item->getQuantity());
+            $this->entityManager->remove($item);
+        }
+        $sale->getItems()->clear();
+
+        $totalPrice = 0;
+        foreach ($data['items'] as $itemData) {
+            $product = $this->entityManager->find(Product::class, $itemData['productId']);
+            if ($product && $product->getQuantity() >= $itemData['quantity']) {
+                $saleItem = new SaleItem();
+                $saleItem->setProduct($product);
+                $saleItem->setQuantity($itemData['quantity']);
+                $sale->addItem($saleItem);
+                $product->setQuantity($product->getQuantity() - $itemData['quantity']);
+                $totalPrice += $product->getPrice() * $itemData['quantity'];
+            } else {
+                http_response_code(404);
+                return "Product {$itemData['productId']} not found or insufficient stock.";
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return "Sale updated successfully. New Total: $" . $totalPrice;
+    }
 }
