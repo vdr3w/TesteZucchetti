@@ -539,6 +539,54 @@ GET /sale/show?id=1
 }
 ```
 
+### 🔍 Listar Vendas por Cliente
+
+- **Endpoint:** `/sale/listByCustomer`
+- **Método HTTP:** GET
+- **Parâmetros:**
+  - `customerId`: integer - ID do cliente especificado como parâmetro de consulta na URL, por exemplo, `/sale/listByCustomer?customerId=1`.
+  
+**Exemplo de Requisição:**
+
+```http
+GET /sale/listByCustomer?customerId=1
+```
+
+**Exemplo de Resposta Sucesso:**
+
+```json
+[
+  {
+    "id": 1,
+    "customer": 1,
+    "paymentMethod": 2,
+    "items": [
+      {"productId": 1, "quantity": 3},
+      {"productId": 2, "quantity": 1}
+    ],
+    "totalPrice": 250.00
+  }
+]
+```
+
+**Exemplo de Resposta Erro (cliente não encontrado):**
+
+```json
+{
+  "success": false,
+  "error": "Cliente não encontrado."
+}
+```
+
+**Exemplo de Resposta Erro (nenhuma venda encontrada para o cliente):**
+
+```json
+{
+  "success": false,
+  "error": "Nenhuma venda encontrada para o cliente especificado."
+}
+```
+
 ### ✏️ Atualizar Venda
 
 ```http
