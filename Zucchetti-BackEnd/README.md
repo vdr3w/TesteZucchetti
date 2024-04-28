@@ -13,10 +13,12 @@ Esta documentação cobre os endpoints disponíveis para gerenciar produtos, cli
 </br>
 </br>
 ![#tamojunto](https://img.shields.io/badge/%23tamojunto-blue.svg)
-
+***
 ## 📦📦 Endpoints de Produto
 
 ### 🆕 Criar Produto
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/HUCmPp5.png)
 
 ```http
 POST /product/create
@@ -55,8 +57,10 @@ POST /product/create
   "error": "Dados faltando para nome, preço ou quantidade."
 }
 ```
-
+***
 ### 📋 Listar Produtos
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/alysT5T.png)
 
 ```http
 GET /product/list
@@ -80,8 +84,10 @@ GET /product/list
   }
 ]
 ```
-
+***
 ### 🔍 Exibir Produto
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/duCPvjK.png)
 
 ```http
 GET /product/show?id=1
@@ -101,8 +107,10 @@ GET /product/show?id=1
   "quantity": 150
 }
 ```
-
+***
 ### ✏️ Atualizar Produto
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/8IG7O4g.png)
 
 ```http
 POST /product/update
@@ -134,8 +142,10 @@ POST /product/update
   "message": "Produto atualizado com sucesso."
 }
 ```
-
+***
 ### ❌ Deletar Produto
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/ZpnvYJN.png)
 
 ```http
 POST /product/delete?id=1
@@ -162,10 +172,12 @@ POST /product/delete?id=1
   "error": "Item usado em alguma venda e não pode ser deletado."
 }
 ```
-
+***
 ## 👥👥 Endpoints de Cliente
 
 ### 🆕 Criar Cliente
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/o9pHhsA.png)
 
 ```http
 POST /customer/create
@@ -183,9 +195,9 @@ POST /customer/create
 
 ```json
 {
-  "name": "João Silva",
+  "name": "Drew Vieira",
   "cpf": "123.456.789-10",
-  "email": "joao.silva@example.com",
+  "email": "drew.vieira@example.com",
   "cep": "12345-678",
   "address": "Rua Exemplo, 100, Cidade, Estado"
 }
@@ -208,8 +220,10 @@ POST /customer/create
   "error": "Dados faltando para nome, cpf, email, cep ou endereço."
 }
 ```
-
+***
 ### 📋 Listar Clientes
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/ueKAzCS.png)
 
 ```http
 GET /customer/list
@@ -221,16 +235,18 @@ GET /customer/list
 [
   {
     "id": 1,
-    "name": "João Silva",
+    "name": "Drew Vieira",
     "cpf": "123.456.789-10",
-    "email": "joao.silva@example.com",
+    "email": "drew.vieira@example.com",
     "cep": "12345-678",
     "address": "Rua Exemplo, 100, Cidade, Estado"
   }
 ]
 ```
-
+***
 ### 🔍 Exibir Cliente
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/aplBKqm.png)
 
 ```http
 GET /customer/show?id=1
@@ -245,15 +261,17 @@ GET /customer/show?id=1
 ```json
 {
   "id": 1,
-  "name": "João Silva",
+  "name": "Drew Vieira",
   "cpf": "123.456.789-10",
-  "email": "joao.silva@example.com",
+  "email": "drew.vieira@example.com",
   "cep": "12345-678",
   "address": "Rua Exemplo, 100, Cidade, Estado"
 }
 ```
-
+***
 ### ✏️ Atualizar Cliente
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/dk8EIoY.png)
 
 ```http
 POST /customer/update
@@ -273,7 +291,7 @@ POST /customer/update
 ```json
 {
   "id": 1,
-  "name": "João Silva atualizado",
+  "name": "Drew Vieira atualizado",
   "email": "novo.email@exemplo.com"
 }
 ```
@@ -286,8 +304,10 @@ POST /customer/update
   "message": "Cliente atualizado com sucesso."
 }
 ```
-
+***
 ### ❌ Deletar Cliente
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/mcneQUt.png)
 
 ```http
 POST /customer/delete?id=1
@@ -314,10 +334,12 @@ POST /customer/delete?id=1
   "error": "Cliente não pode ser deletado pois está em uso."
 }
 ```
-
+***
 ## 💳💳 Endpoints de Método de Pagamento
 
 ### 🆕 Criar Método de Pagamento
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/OhM70kC.png)
 
 ```http
 POST /payment-method/create
@@ -354,8 +376,10 @@ POST /payment-method/create
   "error": "Dados faltando para nome ou parcelas."
 }
 ```
-
+***
 ### 📋 Listar Métodos de Pagamento
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/OwwhBgB.png)
 
 ```http
 GET /payment-method/list
@@ -377,8 +401,10 @@ GET /payment-method/list
   }
 ]
 ```
-
+***
 ### 🔍 Exibir Método de Pagamento
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/WEaf5N9.png)
 
 ```http
 GET /payment-method/show?id=1
@@ -397,8 +423,10 @@ GET /payment-method/show?id=1
   "installments": 12
 }
 ```
-
+***
 ### ✏️ Atualizar Método de Pagamento
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/yIToFPp.png)
 
 ```http
 POST /payment-method/update
@@ -428,8 +456,10 @@ POST /payment-method/update
   "message": "Método de pagamento atualizado com sucesso."
 }
 ```
-
+***
 ### ❌ Deletar Método de Pagamento
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/S9NbbSs.png)
 
 ```http
 POST /payment-method/delete?id=1
@@ -456,9 +486,12 @@ POST /payment-method/delete?id=1
   "error": "Método de pagamento não pode ser deletado pois está em uso."
 }
 ```
+***
 ## 💸💸 Endpoints de Vendas
 
 ### 🆕 Criar Venda
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/OgH0nzb.png)
 
 ```http
 POST /sale/create
@@ -500,8 +533,10 @@ POST /sale/create
   "error": "Dados faltando para customerId, paymentMethodId ou items."
 }
 ```
-
+***
 ### 📋 Listar Vendas
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/1yrwzo7.png)
 
 ```http
 GET /sale/list
@@ -523,8 +558,10 @@ GET /sale/list
   }
 ]
 ```
+***
+### 🔍 Exibir Venda (ID)
 
-### 🔍 Exibir Venda
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/NeUSm3v.png)
 
 ```http
 GET /sale/show?id=1
@@ -548,8 +585,10 @@ GET /sale/show?id=1
   "totalPrice": 250.00
 }
 ```
-
+***
 ### 🔍 Listar Vendas por Cliente
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/COpAfF3.png)
 
 - **Endpoint:** `/sale/listByCustomer`
 - **Método HTTP:** GET
@@ -596,8 +635,10 @@ GET /sale/listByCustomer?customerId=1
   "error": "Nenhuma venda encontrada para o cliente especificado."
 }
 ```
-
+***
 ### ✏️ Atualizar Venda
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/7JuPCS1.png)
 
 ```http
 POST /sale/update
@@ -630,8 +671,10 @@ POST /sale/update
   "message": "Venda atualizada com sucesso. Novo Total: $180.00"
 }
 ```
-
+***
 ### ❌ Deletar Venda
+
+![Exemplo de Requisição no Insomnia](https://i.imgur.com/FAjjE2N.png)
 
 ```http
 POST /sale/delete?id=1
@@ -655,7 +698,7 @@ POST /sale/delete?id=1
 ```json
 {
   "success": false,
-  "error": "Erro ao excluir venda: [Descrição do erro]"
+  "error": "Venda em uso ou não encontrada."
 }
 ```
 
