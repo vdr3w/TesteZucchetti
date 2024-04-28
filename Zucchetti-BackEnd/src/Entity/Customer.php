@@ -16,13 +16,13 @@ class Customer
     #[ORM\Column(type: 'string', length: 100)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 11)]
+    #[ORM\Column(type: 'string', length: 14)]
     private string $cpf;
 
     #[ORM\Column(type: 'string', length: 100)]
     private string $email;
 
-    #[ORM\Column(type: 'string', length: 8)]
+    #[ORM\Column(type: 'string', length: 10)]
     private string $cep;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -48,8 +48,9 @@ class Customer
     }
 
     public function setCpf(string $cpf): void {
-        if (!preg_match("/^\d{3}\.\d{3}\.\d{3}-\d{2}$/", $cpf)) {
-            throw new InvalidArgumentException("CPF inválido. Formato esperado: 000.000.000-00.");
+        $cpf = preg_replace('/[^0-9]/', '', $cpf); 
+        if (strlen($cpf) != 11) {
+            throw new InvalidArgumentException("CPF inválido. Formato esperado: 00000000000.");
         }
         $this->cpf = $cpf;
     }
