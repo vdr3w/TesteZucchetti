@@ -48,8 +48,8 @@ class SaleController
                 $saleItem->setQuantity($item['quantity']);
                 $sale->addItem($saleItem);
 
-                $product->setQuantity($product->getQuantity() - $item['quantity']);  // Decrementar estoque
-                $totalPrice += $product->getPrice() * $item['quantity'];  // Calcula o total
+                $product->setQuantity($product->getQuantity() - $item['quantity']);
+                $totalPrice += $product->getPrice() * $item['quantity'];
             } else {
                 http_response_code(404);
                 return "Product {$item['productId']} not found or insufficient stock.";
@@ -171,5 +171,30 @@ class SaleController
         $this->entityManager->flush();
 
         return "Sale updated successfully. New Total: $" . $totalPrice;
+    }
+
+    public function deleteSale($id)
+    {
+        $sale = $this->entityManager->find(Sale::class, $id);
+
+        if (!$sale) {
+            http_response_code(404);
+            return "No sale found.";
+        }
+
+        foreach ($sale->getItems() as $item) {
+            $product = $item->getProduct();
+            $product->setQuantity($product->getQuantity() + $item->getQuantity());
+        }
+
+        // Remove cada item individualmente para evitar problemas de foreign key
+        foreach ($sale->getItems() as $item) {
+            $this->entityManager->remove($item);
+        }
+
+        $this->entityManager->remove($sale);
+        $this->entityManager->flush();
+
+        return "Deleted sale with ID $id.";
     }
 }
