@@ -72,4 +72,22 @@ class ProductController
         ]);
     }
 
+    public function updateProduct($id, $name, $price, $quantity)
+    {
+        $product = $this->entityManager->find(Product::class, $id);
+        if (!$product) {
+            http_response_code(404);
+            return "Product $id does not exist.";
+        }
+
+        $product->setName($name);
+        $product->setPrice((float) $price);
+        $product->setQuantity((int) $quantity);
+
+        $this->entityManager->flush();
+
+        return "Product updated successfully.";
+    }
+
+
 }
