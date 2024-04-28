@@ -16,7 +16,6 @@ class ProductController
 
     public function createProduct()
     {
-        // Capturando o conteúdo JSON da requisição
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!isset($data['name'], $data['price'], $data['quantity'])) {
@@ -24,83 +23,111 @@ class ProductController
             return "Missing data for name, price or quantity.";
         }
 
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setPrice((float) $data['price']);
-        $product->setQuantity((int) $data['quantity']);
+        try {
+            $product = new Product();
+            $product->setName($data['name']);
+            $product->setPrice((float) $data['price']);
+            $product->setQuantity((int) $data['quantity']);
 
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
 
-        http_response_code(201);
-        return "Created Product with ID " . $product->getId() . "\n";
+            http_response_code(201);
+            echo json_encode(['success' => true, 'message' => 'Produto criado com sucesso com ID ' . $product->getId()]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao criar produto: ' . $e->getMessage()]);
+        }
     }
 
     public function listProducts()
     {
-        $products = $this->entityManager->getRepository(Product::class)->findAll();
-        $productList = [];
+        try {
+            $products = $this->entityManager->getRepository(Product::class)->findAll();
+            $productList = [];
 
-        foreach ($products as $product) {
-            $productList[] = [
-                'id' => $product->getId(),
-                'name' => $product->getName(),
-                'price' => $product->getPrice(),
-                'quantity' => $product->getQuantity()
-            ];
+            foreach ($products as $product) {
+                $productList[] = [
+                    'id' => $product->getId(),
+                    'name' => $product->getName(),
+                    'price' => $product->getPrice(),
+                    'quantity' => $product->getQuantity()
+                ];
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode($productList);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao listar produtos: ' . $e->getMessage()]);
         }
-
-        header('Content-Type: application/json');
-        return json_encode($productList);
     }
 
     public function showProduct($id)
     {
-        $product = $this->entityManager->find(Product::class, $id);
+        try {
+            $product = $this->entityManager->find(Product::class, $id);
 
-        if (!$product) {
-            http_response_code(404);
-            return "No product found.";
+            if (!$product) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Produto não encontrado.']);
+                return;
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+                'quantity' => $product->getQuantity()
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao exibir produto: ' . $e->getMessage()]);
         }
-
-        header('Content-Type: application/json');
-        return json_encode([
-            'id' => $product->getId(),
-            'name' => $product->getName(),
-            'price' => $product->getPrice(),
-            'quantity' => $product->getQuantity()
-        ]);
     }
 
     public function updateProduct($id, $name, $price, $quantity)
     {
-        $product = $this->entityManager->find(Product::class, $id);
-        if (!$product) {
-            http_response_code(404);
-            return "Product $id does not exist.";
+        try {
+            $product = $this->entityManager->find(Product::class, $id);
+            if (!$product) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => "Produto $id não existe."]);
+                return;
+            }
+
+            $product->setName($name);
+            $product->setPrice((float) $price);
+            $product->setQuantity((int) $quantity);
+
+            $this->entityManager->flush();
+
+            echo json_encode(['success' => true, 'message' => 'Produto atualizado com sucesso.']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao atualizar produto: ' . $e->getMessage()]);
         }
-
-        $product->setName($name);
-        $product->setPrice((float) $price);
-        $product->setQuantity((int) $quantity);
-
-        $this->entityManager->flush();
-
-        return "Product updated successfully.";
     }
 
     public function deleteProduct($id)
     {
-        $product = $this->entityManager->find(Product::class, $id);
+        try {
+            $product = $this->entityManager->find(Product::class, $id);
 
-        if (!$product) {
-            http_response_code(404);
-            return "No product found.";
+            if (!$product) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Produto não encontrado.']);
+                return;
+            }
+
+            $this->entityManager->remove($product);
+            $this->entityManager->flush();
+
+            echo json_encode(['success' => true, 'message' => 'Produto excluído com sucesso.']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao excluir produto: ' . $e->getMessage()]);
         }
-
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
-
-        return "Deleted product with ID $id.";
     }
 }
