@@ -6,9 +6,11 @@ require_once 'bootstrap.php';
 use MyProject\Controller\ProductController;
 use MyProject\Controller\CustomerController;
 use MyProject\Controller\PaymentMethodController;
+use MyProject\Controller\SaleController;
 use MyProject\Service\ProductService;
 use MyProject\Service\CustomerService;
 use MyProject\Service\PaymentMethodService;
+use MyProject\Service\SaleService;
 
 
 $entityManager = GetEntityManager();
@@ -17,11 +19,15 @@ $entityManager = GetEntityManager();
 $productService = new ProductService($entityManager);
 $customerService = new CustomerService($entityManager);
 $paymentMethodService = new PaymentMethodService($entityManager);
+$saleService = new SaleService($entityManager);
+
 
 // Instanciando os controladores com as interfaces de serviço
 $productController = new ProductController($productService);
 $customerController = new CustomerController($customerService);
 $paymentMethodController = new PaymentMethodController($paymentMethodService);
+$saleController = new SaleController($saleService);
+
 
 $inputJSON = file_get_contents('php://input');
 $data = json_decode($inputJSON, true);
@@ -149,6 +155,14 @@ switch ($path) {
             echo $response;
         }
         break;
+    case '/sale/listByCustomer':
+        if ($requestMethod == 'GET' && isset($_GET['customerId'])) {
+            $customerId = $_GET['customerId'];
+            $response = $saleController->listSalesByCustomer($customerId);
+            echo $response;
+        }
+        break;
+
     case '/sale/show':
         if ($requestMethod == 'GET' && isset($_GET['id'])) {
             $response = $saleController->showSale($_GET['id']);
