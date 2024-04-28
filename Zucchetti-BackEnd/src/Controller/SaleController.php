@@ -100,6 +100,50 @@ class SaleController
         }
     }
 
+    public function listSalesByCustomer($customerId)
+    {
+        try {
+            $customer = $this->entityManager->find(Customer::class, $customerId);
+            if (!$customer) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Cliente não encontrado.']);
+                return;
+            }
+
+            $salesQuery = $this->entityManager->getRepository(Sale::class);
+            $sales = $salesQuery->findBy(['customer' => $customerId]);
+
+            if (empty($sales)) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Nenhuma venda encontrada para o cliente especificado.']);
+                return;
+            }
+
+            $salesList = [];
+            foreach ($sales as $sale) {
+                $itemsList = array_map(function ($item) {
+                    return [
+                        'productId' => $item->getProduct()->getId(),
+                        'quantity' => $item->getQuantity()
+                    ];
+                }, $sale->getItems()->toArray());
+
+                $salesList[] = [
+                    'id' => $sale->getId(),
+                    'customer' => $sale->getCustomer()->getId(),
+                    'paymentMethod' => $sale->getPaymentMethod()->getId(),
+                    'items' => $itemsList
+                ];
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode($salesList);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro ao listar vendas por cliente: ' . $e->getMessage()]);
+        }
+    }
+
     public function showSale($id)
     {
         try {
