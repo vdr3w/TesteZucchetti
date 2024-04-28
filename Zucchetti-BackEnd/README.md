@@ -14,6 +14,8 @@ Esta documentação cobre os endpoints disponíveis para gerenciar produtos, cli
 </br>
 ![#tamojunto](https://img.shields.io/badge/%23tamojunto-blue.svg)
 ***
+![Diagrama de Classes](https://i.imgur.com/rai5X3W.png)
+***
 ## 📦📦 Endpoints de Produto
 
 ### 🆕 Criar Produto
