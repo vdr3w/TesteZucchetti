@@ -2,7 +2,17 @@
  
 # Documentação da API de Gerenciamento de Produtos e Vendas 🛍️
 
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+</br>
+![Doctrine ORM](https://img.shields.io/badge/Doctrine-ORM-blue.svg)
+![Made with Love in Brazil](https://img.shields.io/badge/Made%20with-Love%20in%20Brazil-green)
+</br>
+
 Esta documentação cobre os endpoints disponíveis para gerenciar produtos, clientes, métodos de pagamento e vendas, detalhando métodos, parâmetros necessários e exemplos de respostas.
+</br>
+</br>
+![#tamojunto](https://img.shields.io/badge/%23tamojunto-blue.svg)
 
 ## 📦📦 Endpoints de Produto
 
