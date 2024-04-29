@@ -713,4 +713,138 @@ POST /sale/delete?id=1
   "error": "Venda em uso ou não encontrada."
 }
 ```
+***
+## 🧪 Testes Implementados
 
+Aqui está uma visão geral dos testes implementados para os componentes principais do sistema. Os testes garantem a validação das funcionalidades essenciais de cada módulo.
+
+### 🚹 Testes de Cliente
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ Can be created with valid values      | Verifica a criação de clientes com valores válidos.         |
+| ✔ Throws exception for invalid name     | Verifica a exceção lançada para nome inválido.              |
+| ✔ Throws exception for invalid cpf      | Verifica a exceção lançada para CPF inválido.               |
+| ✔ Throws exception for invalid email    | Verifica a exceção lançada para e-mail inválido.            |
+| ✔ Throws exception for invalid cep      | Verifica a exceção lançada para CEP inválido.               |
+| ✔ Throws exception for invalid address  | Verifica a exceção lançada para endereço inválido.          |
+
+### 📚 Testes de Repositório de Cliente
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ SaveProduct PersistsAndFlushesProduct | Verifica a persistência e limpeza do produto no repositório.|
+| ✔ RemoveProduct RemovesAndFlushesProduct| Verifica a remoção e limpeza do produto no repositório.     |
+
+### 🛠️ Testes de Serviço de Cliente
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ CreateCustomer Success                | Testa a criação bem-sucedida de um cliente.                 |
+| ✔ CreateCustomer FailureMissingData     | Testa a falha na criação de um cliente por dados faltantes. |
+| ✔ CreateCustomer ExceptionDuringPersistence | Testa a exceção durante a persistência dos dados.         |
+| ✔ ListCustomers ReturnsAllCustomers     | Testa a listagem de todos os clientes.                      |
+| ✔ ListCustomers HandlesException        | Testa o manejo de exceções ao listar clientes.              |
+| ✔ ShowCustomer CustomerFound            | Testa a exibição bem-sucedida de um cliente encontrado.     |
+| ✔ ShowCustomer CustomerNotFound         | Testa a resposta quando um cliente não é encontrado.        |
+| ✔ UpdateCustomer SuccessfulUpdate       | Testa a atualização bem-sucedida de um cliente.             |
+| ✔ UpdateCustomer CustomerNotFound       | Testa a atualização falha quando o cliente não é encontrado.|
+| ✔ DeleteCustomer SuccessfulDeletion     | Testa a exclusão bem-sucedida de um cliente.                |
+| ✔ DeleteCustomer CustomerNotFound       | Testa a tentativa falha de excluir um cliente não encontrado.|
+
+***
+ 
+### 💳 Testes de Método de Pagamento
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ Set name with valid name              | Verifica a definição de um nome válido para o método de pagamento. |
+| ✔ Set name with empty name throws exception | Verifica o erro ao definir um nome vazio para o método de pagamento. |
+| ✔ Set installments with valid number    | Verifica a definição de um número válido de parcelas.       |
+| ✔ Set installments with invalid number throws exception | Verifica o erro ao definir um número inválido de parcelas.  |
+
+### 📦 Testes de Repositório de Método de Pagamento
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ SavePaymentMethod PersistsAndFlushesProduct | Verifica a persistência e limpeza do método de pagamento no repositório. |
+| ✔ RemovePaymentMethod RemovesAndFlushesProduct| Verifica a remoção e limpeza do método de pagamento no repositório.     |
+
+### 🔧 Testes de Serviço de Método de Pagamento
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ CreatePaymentMethod CreatesAndPersistsPaymentMethod | Testa a criação e persistência de um método de pagamento.  |
+| ✔ ListPaymentMethods ReturnsAllPaymentMethods | Testa a listagem de todos os métodos de pagamento.         |
+| ✔ ShowPaymentMethod ReturnsPaymentMethodDetails | Testa a exibição dos detalhes de um método de pagamento.   |
+| ✔ ShowPaymentMethod PaymentMethodNotFound | Verifica o erro quando o método de pagamento não é encontrado. |
+| ✔ UpdatePaymentMethod UpdatesExistingPaymentMethod | Testa a atualização de um método de pagamento existente.    |
+| ✔ DeletePaymentMethod DeletesPaymentMethod | Testa a exclusão de um método de pagamento.                 |
+| ✔ DeletePaymentMethod PaymentMethodNotFound | Verifica o erro quando o método de pagamento para deletar não é encontrado. |
+
+***
+ 
+### 🛍️ Testes de Produto
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ Set name with valid name              | Verifica a definição de um nome válido para o produto.      |
+| ✔ Set name with empty name throws exception | Verifica o erro ao definir um nome vazio para o produto.    |
+| ✔ Set price with positive value         | Verifica a definição de um preço positivo para o produto.   |
+| ✔ Set price with non positive value throws exception | Verifica o erro ao definir um preço não positivo para o produto.|
+
+### 📦 Testes de Repositório de Produto
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ SaveProduct PersistsAndFlushesProduct | Verifica a persistência e limpeza do produto no repositório.|
+| ✔ RemoveProduct RemovesAndFlushesProduct| Verifica a remoção e limpeza do produto no repositório.     |
+
+### 🔧 Testes de Serviço de Produto
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ CreateProduct CreatesAndPersistsProduct | Testa a criação e persistência de um produto.               |
+| ✔ ListProducts ReturnsAllProducts       | Testa a listagem de todos os produtos.                      |
+| ✔ ShowProduct ReturnsProductDetails     | Testa a exibição dos detalhes de um produto.                |
+| ✔ ShowProduct ProductNotFound           | Verifica o erro quando um produto não é encontrado.         |
+| ✔ UpdateProduct UpdatesExistingProduct  | Testa a atualização de um produto existente.                |
+| ✔ DeleteProduct DeletesProduct          | Testa a exclusão de um produto.                             |
+| ✔ DeleteProduct ProductNotFound         | Verifica o erro quando o produto para deletar não é encontrado. |
+
+***
+ 
+### 🛒 Testes de Venda
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ Set customer                          | Testa a definição de um cliente para a venda.               |
+| ✔ Add product                           | Testa a adição de um produto à venda.                       |
+| ✔ AddProduct DoesNotAddDuplicates       | Verifica que produtos duplicados não são adicionados à venda.|
+| ✔ Remove product                        | Testa a remoção de um produto da venda.                     |
+| ✔ RemoveProduct OnlyRemovesSpecifiedProduct | Verifica que apenas o produto especificado é removido da venda.|
+| ✔ Set payment method                    | Testa a definição de um método de pagamento para a venda.   |
+| ✔ Add item                              | Testa a adição de um item à venda.                          |
+
+### 📦 Testes de Repositório de Venda
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ SaveSale PersistsAndFlushesSale       | Verifica a persistência e limpeza de uma venda no repositório.|
+| ✔ RemoveSale RemovesAndFlushesSale      | Verifica a remoção e limpeza de uma venda no repositório.    |
+
+### 🔧 Testes de Serviço de Venda
+
+| Teste                                   | Descrição                                                   |
+|-----------------------------------------|-------------------------------------------------------------|
+| ✔ CreateSale MissingData                | Verifica o tratamento de dados faltantes na criação de uma venda.  |
+| ✔ CreateSale CustomerOrPaymentMethodNotFound| Verifica o erro quando o cliente ou método de pagamento não existem.|
+| ✔ CreateSale SuccessfulCreation         | Verifica a criação bem-sucedida de uma venda.               |
+| ✔ ListSales ReturnsAllSales             | Verifica se todas as vendas são listadas corretamente.     |
+| ✔ ListSalesByCustomer ReturnsSalesForGivenCustomer | Verifica se as vendas de um cliente específico são listadas corretamente.|
+| ✔ ListSales HandlesException            | Verifica o manejo de exceções ao listar vendas.            |
+| ✔ ShowSale Successful                   | Verifica a exibição bem-sucedida de detalhes de uma venda. |
+| ✔ UpdateSale SuccessfulUpdate           | Verifica a atualização bem-sucedida de uma venda.          |
+| ✔ UpdateSale CustomerNotFound           | Verifica o erro quando o cliente não é encontrado durante a atualização.|
+| ✔ DeleteSale SuccessfulDeletion         | Verifica a exclusão bem-sucedida de uma venda.             |
+| ✔ DeleteSale SaleNotFound               | Verifica o erro quando a venda não é encontrada para exclusão.|
