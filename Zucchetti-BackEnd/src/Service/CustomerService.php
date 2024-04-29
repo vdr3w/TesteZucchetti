@@ -16,7 +16,7 @@ class CustomerService implements CustomerServiceInterface {
     public function createCustomer(array $data): array {
         if (!isset($data['name'], $data['cpf'], $data['email'], $data['cep'], $data['address'])) {
             http_response_code(400);
-            return ['httpCode' => 400, 'body' => "Missing data for name, cpf, email, cep, or address."];
+            return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'message' => "Missing data for name, cpf, email, cep, or address."])];
         }
 
         $customer = new Customer();
