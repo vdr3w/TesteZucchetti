@@ -2,105 +2,46 @@
 
 namespace MyProject\Controller;
 
-use Doctrine\ORM\EntityManager;
-use MyProject\Entity\Product;
+use MyProject\Service\ProductService;
+use MyProject\Interface\ProductServiceInterface;  // Usando a interface ao invés da classe concreta.
 
-class ProductController
-{
-    private $entityManager;
 
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
+class ProductController {
+    private $productService;
+
+    public function __construct(ProductServiceInterface $productService) {  // Injeção da interface
+        $this->productService = $productService;
     }
 
-    public function createProduct()
-    {
-        // Capturando o conteúdo JSON da requisição
+    public function createProduct() {
         $data = json_decode(file_get_contents("php://input"), true);
-
-        if (!isset($data['name'], $data['price'], $data['quantity'])) {
-            http_response_code(400);
-            return "Missing data for name, price or quantity.";
-        }
-
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setPrice((float) $data['price']);
-        $product->setQuantity((int) $data['quantity']);
-
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
-
-        http_response_code(201);
-        return "Created Product with ID " . $product->getId() . "\n";
+        $result = $this->productService->createProduct($data);
+        http_response_code($result['httpCode']);
+        echo $result['body'];
     }
 
-    public function listProducts()
-    {
-        $products = $this->entityManager->getRepository(Product::class)->findAll();
-        $productList = [];
-
-        foreach ($products as $product) {
-            $productList[] = [
-                'id' => $product->getId(),
-                'name' => $product->getName(),
-                'price' => $product->getPrice(),
-                'quantity' => $product->getQuantity()
-            ];
-        }
-
-        header('Content-Type: application/json');
-        return json_encode($productList);
+    public function listProducts() {
+        $result = $this->productService->listProducts();
+        http_response_code($result['httpCode']);
+        echo $result['body'];
     }
 
-    public function showProduct($id)
-    {
-        $product = $this->entityManager->find(Product::class, $id);
-
-        if (!$product) {
-            http_response_code(404);
-            return "No product found.";
-        }
-
-        header('Content-Type: application/json');
-        return json_encode([
-            'id' => $product->getId(),
-            'name' => $product->getName(),
-            'price' => $product->getPrice(),
-            'quantity' => $product->getQuantity()
-        ]);
+    public function showProduct($id) {
+        $result = $this->productService->showProduct($id);
+        http_response_code($result['httpCode']);
+        echo $result['body'];
     }
 
-    public function updateProduct($id, $name, $price, $quantity)
-    {
-        $product = $this->entityManager->find(Product::class, $id);
-        if (!$product) {
-            http_response_code(404);
-            return "Product $id does not exist.";
-        }
-
-        $product->setName($name);
-        $product->setPrice((float) $price);
-        $product->setQuantity((int) $quantity);
-
-        $this->entityManager->flush();
-
-        return "Product updated successfully.";
+    public function updateProduct($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $result = $this->productService->updateProduct($id, $data);
+        http_response_code($result['httpCode']);
+        echo $result['body'];
     }
 
-    public function deleteProduct($id)
-    {
-        $product = $this->entityManager->find(Product::class, $id);
-
-        if (!$product) {
-            http_response_code(404);
-            return "No product found.";
-        }
-
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
-
-        return "Deleted product with ID $id.";
+    public function deleteProduct($id) {
+        $result = $this->productService->deleteProduct($id);
+        http_response_code($result['httpCode']);
+        echo $result['body'];
     }
 }
