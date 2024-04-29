@@ -10,29 +10,55 @@ use Doctrine\Migrations\DependencyFactory;
 
 require_once "vendor/autoload.php";
 
-// Configurações para ambiente de desenvolvimento
 $isDevMode = true;
 
-// Configuração usando atributos de metadados
 $config = ORMSetup::createAttributeMetadataConfiguration(
     [__DIR__ . "/src"], 
     $isDevMode
 );
 
-// Configurações de conexão para PostgreSQL
 $conn = DriverManager::getConnection([
-    'driver'   => 'pdo_pgsql',  // Driver do PostgreSQL
-    'host'     => 'localhost',  // ou o endereço IP do servidor PostgreSQL
-    'port'     => '5432',       // Porta padrão do PostgreSQL
-    'dbname'   => 'DBZucchetti', // Nome do banco de dados
-    'user'     => 'admin',     // Nome do usuário
-    'password' => 'admin', // Senha do usuário
+    'driver'   => 'pdo_pgsql',
+    'host'     => 'localhost',
+    'port'     => '5432', 
+    'dbname'   => 'DBZucchetti',
+    'user'     => 'admin',
+    'password' => 'admin',
 ], $config);
 
-// Criando o EntityManager com a conexão configurada
 $entityManager = new EntityManager($conn, $config);
 
-// Configuração das Migrations
 $migrationsConfig = new PhpFile(__DIR__ . '/migrations.php');
 $entityManagerLoader = new ExistingEntityManager($entityManager);
 $dependencyFactory = DependencyFactory::fromEntityManager($migrationsConfig, $entityManagerLoader);
+
+function GetEntityManager(): EntityManager {
+    global $entityManager;
+    return $entityManager;
+}
+
+set_exception_handler(function ($exception) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Unexpected error occurred: ' . $exception->getMessage()]);
+    exit;
+});
+
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+register_shutdown_function(function () {
+    $error = error_get_last();
+    if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Fatal error: ' . $error['message']]);
+        exit;
+    }
+});
+
+return $entityManager;
