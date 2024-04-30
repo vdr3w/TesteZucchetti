@@ -1,35 +1,31 @@
-@import './base.css';
+:root {
+  --azul-zucchetti: #0072bc;
+  --preto: #1d2127;
+  --cinza: #d4d4d4;
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  --fonte-fundo-azul: #c6d4ee;
+  --fonte-fundo-branco: #2e353e;
+
+  --fonte-padrao: 'Roboto', Arial, sans-serif;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+body {
+  font-family: var(--fonte-padrao);
+  color: var(--fonte-fundo-branco);
+  background-color: white;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.fundo-azul {
+  background-color: var(--azul-zucchetti);
+  color: var(--fonte-fundo-azul);
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.fundo-preto {
+  background-color: var(--preto);
+  color: var(--fonte-fundo-branco);
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+.botoes {
+  background-color: var(--preto);
+  color: var(--fonte-fundo-branco);
 }

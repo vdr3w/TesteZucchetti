@@ -10,6 +10,17 @@ use Doctrine\Migrations\DependencyFactory;
 
 require_once "vendor/autoload.php";
 
+// Configuração de CORS
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('HTTP/1.1 204 No Content');
+    exit;
+}
+
 $isDevMode = true;
 
 $config = ORMSetup::createAttributeMetadataConfiguration(
