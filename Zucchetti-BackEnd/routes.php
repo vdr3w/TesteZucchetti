@@ -11,7 +11,9 @@ use MyProject\Service\ProductService;
 use MyProject\Service\CustomerService;
 use MyProject\Service\PaymentMethodService;
 use MyProject\Service\SaleService;
-
+use MyProject\Entity\AuthToken;
+use MyProject\Entity\BUser;
+use MyProject\Service\AuthService;
 
 $entityManager = GetEntityManager();
 
@@ -20,7 +22,7 @@ $productService = new ProductService($entityManager);
 $customerService = new CustomerService($entityManager);
 $paymentMethodService = new PaymentMethodService($entityManager);
 $saleService = new SaleService($entityManager);
-
+$authService = new AuthService($entityManager);  // Certifique-se de passar o EntityManager
 
 // Instanciando os controladores com as interfaces de serviço
 $productController = new ProductController($productService);
@@ -183,6 +185,31 @@ switch ($path) {
         break;
 
         //
+        case '/login':
+            if ($requestMethod == 'POST') {
+                $username = $data['username'];
+                $password = $data['password'];
+    
+                $user = $entityManager->getRepository(BUser::class)->findOneBy(['username' => $username]);
+    
+                if ($user && password_verify($password, $user->getPassword())) {
+                    $authService->deleteTokensForUser($user);
+    
+                    $tokenStr = $authService->generateToken($user);
+                    $token = new AuthToken();
+                    $token->setUser($user);
+                    $token->setToken($tokenStr);
+                    $token->setCreatedAt(new \DateTime());
+    
+                    $authService->saveToken($token);
+    
+                    echo json_encode(['token' => $tokenStr]);
+                } else {
+                    http_response_code(401);
+                    echo "Unauthorized";
+                }
+                break;
+            }
     default:
         http_response_code(404);
         echo "404 Not Found";
