@@ -4,16 +4,28 @@ namespace MyProject\Service;
 
 use Doctrine\ORM\EntityManager;
 use MyProject\Entity\Product;
-use MyProject\Interface\ProductServiceInterface;  // Adicionado para garantir que o serviço implemente a interface.
+use MyProject\Interface\ProductServiceInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
-class ProductService implements ProductServiceInterface {
+class ProductService implements ProductServiceInterface
+{
     private $entityManager;
+    private $cache;
 
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager, FilesystemAdapter $cache)
+    {
         $this->entityManager = $entityManager;
+        $this->cache = $cache;
     }
 
-    public function createProduct(array $data): array {
+    private function clearProductCache()
+    {
+        $this->cache->delete('product_list_cache');
+    }
+
+    public function createProduct(array $data): array
+    {
         if (!isset($data['name'], $data['price'], $data['quantity'])) {
             return ['httpCode' => 400, 'body' => "Missing data for name, price or quantity."];
         }
@@ -27,17 +39,22 @@ class ProductService implements ProductServiceInterface {
             $this->entityManager->persist($product);
             $this->entityManager->flush();
 
+            $this->cache->delete('product_list_cache');
+
             return ['httpCode' => 201, 'body' => json_encode(['success' => true, 'message' => 'Produto criado com sucesso com ID ' . $product->getId()])];
         } catch (\Exception $e) {
             return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao criar produto: ' . $e->getMessage()])];
         }
     }
 
-    public function listProducts(): array {
-        try {
+    public function listProducts(): array
+    {
+        $cacheKey = 'product_list_cache';
+
+        $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) {
+            $item->expiresAfter(3600);
             $products = $this->entityManager->getRepository(Product::class)->findAll();
             $productList = [];
-
             foreach ($products as $product) {
                 $productList[] = [
                     'id' => $product->getId(),
@@ -46,33 +63,48 @@ class ProductService implements ProductServiceInterface {
                     'quantity' => $product->getQuantity()
                 ];
             }
+            return json_encode($productList);
+        });
 
-            return ['httpCode' => 200, 'body' => json_encode($productList)];
-        } catch (\Exception $e) {
-            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao listar produtos: ' . $e->getMessage()])];
+        if ($cachedData === false) {
+            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao codificar dados dos produtos.'])];
         }
+
+        return ['httpCode' => 200, 'body' => $cachedData];
     }
 
-    public function showProduct(int $id): array {
-        try {
-            $product = $this->entityManager->find(Product::class, $id);
+    public function showProduct(int $id): array
+    {
+        $cacheKey = "product_$id";
 
+        $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) use ($id) {
+            $item->expiresAfter(3600);
+            $product = $this->entityManager->find(Product::class, $id);
             if (!$product) {
                 return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => 'Produto não encontrado.'])];
             }
-
-            return ['httpCode' => 200, 'body' => json_encode([
+            return [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
                 'price' => $product->getPrice(),
                 'quantity' => $product->getQuantity()
-            ])];
-        } catch (\Exception $e) {
-            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao exibir produto: ' . $e->getMessage()])];
+            ];
+        });
+
+        if ($cachedData === false) {
+            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao recuperar dados do cache.'])];
         }
+
+        if (!is_array($cachedData)) {
+            $cachedData = json_decode($cachedData, true);
+        }
+
+        return ['httpCode' => 200, 'body' => json_encode($cachedData)];
     }
 
-    public function updateProduct(int $id, array $data): array {
+
+    public function updateProduct(int $id, array $data): array
+    {
         try {
             $product = $this->entityManager->find(Product::class, $id);
             if (!$product) {
@@ -84,6 +116,7 @@ class ProductService implements ProductServiceInterface {
             $product->setQuantity((int) $data['quantity']);
 
             $this->entityManager->flush();
+            $this->clearProductCache();
 
             return ['httpCode' => 200, 'body' => json_encode(['success' => true, 'message' => 'Produto atualizado com sucesso.'])];
         } catch (\Exception $e) {
@@ -91,7 +124,8 @@ class ProductService implements ProductServiceInterface {
         }
     }
 
-    public function deleteProduct(int $id): array {
+    public function deleteProduct(int $id): array
+    {
         try {
             $product = $this->entityManager->find(Product::class, $id);
 
@@ -101,6 +135,7 @@ class ProductService implements ProductServiceInterface {
 
             $this->entityManager->remove($product);
             $this->entityManager->flush();
+            $this->clearProductCache();
 
             return ['httpCode' => 200, 'body' => json_encode(['success' => true, 'message' => 'Produto excluído com sucesso.'])];
         } catch (\Exception $e) {
