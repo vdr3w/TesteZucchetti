@@ -40,7 +40,13 @@ export default {
     close() {
       this.$emit('close')
     },
+    formatCep(cep) {
+      const onlyNumbers = cep.replace(/\D/g, '');
+      return onlyNumbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+    },
     async submitForm() {
+      this.customer.cep = this.formatCep(this.customer.cep);
+
       let url, method
       if (this.customer.id) {
         // Se 'id' existe, atualize o cliente
