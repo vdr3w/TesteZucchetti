@@ -3,27 +3,31 @@
     <div class="modal-content">
       <span class="close" @click="close">&times;</span>
       <h2>{{ customer.id ? 'Editar Cliente' : 'Adicionar Novo Cliente' }}</h2>
-      <form @submit.prevent="submitForm">
-        <label for="name">Nome:</label>
-        <input id="name" v-model="customer.name" required />
+      <div class="form-container">
+        <form @submit.prevent="submitForm">
+          <label for="name">Nome:</label>
+          <input class="input-style" id="name" v-model="customer.name" required />
 
-        <label for="cpf">CPF:</label>
-        <input id="cpf" v-model="customer.cpf" required />
+          <label for="cpf">CPF:</label>
+          <input class="input-style" id="cpf" v-model="customer.cpf" required />
 
-        <label for="email">Email:</label>
-        <input id="email" v-model="customer.email" required />
+          <label for="email">Email:</label>
+          <input class="input-style" id="email" v-model="customer.email" required />
 
-        <label for="cep">CEP:</label>
-        <input id="cep" v-model="customer.cep" required />
+          <label for="cep">CEP:</label>
+          <input class="input-style" id="cep" v-model="customer.cep" required />
 
-        <label for="address">Endereço:</label>
-        <input id="address" v-model="customer.address" required />
+          <label for="address">Endereço:</label>
+          <input class="input-style" id="address" v-model="customer.address" required />
 
-        <div class="modal-buttons">
-          <button type="submit">{{ customer.id ? 'Atualizar' : 'Salvar' }}</button>
-          <button type="button" @click="close">Fechar</button>
-        </div>
-      </form>
+          <div class="modal-buttons">
+            <button class="button-style" type="submit">
+              {{ customer.id ? 'ATUALIZAR' : 'SALVAR' }}
+            </button>
+            <button class="button-style" type="button" @click="close">FECHAR</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -41,19 +45,17 @@ export default {
       this.$emit('close')
     },
     formatCep(cep) {
-      const onlyNumbers = cep.replace(/\D/g, '');
-      return onlyNumbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+      const onlyNumbers = cep.replace(/\D/g, '')
+      return onlyNumbers.replace(/(\d{5})(\d{3})/, '$1-$2')
     },
     async submitForm() {
-      this.customer.cep = this.formatCep(this.customer.cep);
+      this.customer.cep = this.formatCep(this.customer.cep)
 
       let url, method
       if (this.customer.id) {
-        // Se 'id' existe, atualize o cliente
         url = `http://localhost:8000/customer/update?id=${this.customer.id}`
         method = 'post'
       } else {
-        // Se 'id' não existe, crie um novo cliente
         url = 'http://localhost:8000/customer/create'
         method = 'post'
       }
@@ -98,6 +100,22 @@ export default {
   top: 10px;
   right: 14px;
   font-size: 24px;
+  color: var(--preto);
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.input-style {
+  width: 90%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--cinza);
+  border-radius: 4px;
 }
 
 .modal-buttons {
@@ -106,7 +124,18 @@ export default {
   justify-content: space-between;
 }
 
-button {
+.button-style {
+  background-color: var(--preto);
+  color: #ffffff;
   padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  width: 48%;
+}
+
+.button-style:hover {
+  background-color: #1d2127;
 }
 </style>
