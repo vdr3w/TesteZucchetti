@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 import ProductModal from '@/components/product/ProductModal.vue'
 import Navbar from '@/components/Navbar.vue'
 
@@ -77,7 +77,7 @@ export default {
     },
     async fetchProducts() {
       try {
-        const response = await axios.get('http://localhost:8000/product/list')
+        const response = await api.get('/product/list')
         this.products = response.data
       } catch (error) {
         console.error('Erro ao buscar produtos:', error)
@@ -85,7 +85,7 @@ export default {
     },
     async deleteProduct(id) {
       try {
-        const response = await axios.post(`http://localhost:8000/product/delete?id=${id}`)
+        const response = await api.post(`/product/delete?id=${id}`)
         alert(response.data.message)
         this.fetchProducts()
       } catch (error) {

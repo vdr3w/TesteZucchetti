@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 import PaymentMethodModal from '@/components/paymentmethod/PaymentMethodModal.vue'
 import Navbar from '@/components/Navbar.vue'
 
@@ -75,7 +75,7 @@ export default {
     },
     async fetchPaymentMethods() {
       try {
-        const response = await axios.get('http://localhost:8000/payment-method/list')
+        const response = await api.get('/payment-method/list')
         this.methods = response.data
       } catch (error) {
         console.error('Erro ao buscar métodos de pagamento:', error)
@@ -83,7 +83,7 @@ export default {
     },
     async deletePaymentMethod(id) {
       try {
-        const response = await axios.post(`http://localhost:8000/payment-method/delete?id=${id}`)
+        const response = await api.post(`/payment-method/delete?id=${id}`)
         alert(response.data.message)
         this.fetchPaymentMethods()
       } catch (error) {
