@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 import CustomerModal from '@/components/customers/CustomerModal.vue'
 import Navbar from '@/components/Navbar.vue'
 
@@ -85,7 +85,7 @@ export default {
     },
     async fetchCustomers() {
       try {
-        const response = await axios.get('http://localhost:8000/customer/list')
+        const response = await api.get('/customer/list')
         this.customers = response.data
       } catch (error) {
         console.error('Erro ao buscar clientes:', error)
@@ -96,7 +96,7 @@ export default {
     },
     async deleteCustomer(id) {
       try {
-        const response = await axios.post(`http://localhost:8000/customer/delete?id=${id}`)
+        const response = await api.post(`/customer/delete?id=${id}`)
         alert(response.data.message)
         this.fetchCustomers()
       } catch (error) {

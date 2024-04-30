@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 
 export default {
   props: {
@@ -53,20 +53,20 @@ export default {
 
       let url, method
       if (this.customer.id) {
-        url = `http://localhost:8000/customer/update?id=${this.customer.id}`
+        url = `/customer/update?id=${this.customer.id}`
         method = 'post'
       } else {
-        url = 'http://localhost:8000/customer/create'
+        url = '/customer/create'
         method = 'post'
       }
 
       try {
-        const response = await axios[method](url, this.customer)
+        const response = await api[method](url, this.customer)
         alert(response.data.message)
         this.close()
         this.$emit('refresh')
       } catch (error) {
-        console.error('Erro ao salvar cliente:', error)
+        console.error('Erro ao salvar cliente:', error.response ? error.response.data : 'Server error')
         alert('Falha ao salvar cliente.')
       }
     }
