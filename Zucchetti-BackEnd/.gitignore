@@ -1,1 +1,4 @@
 /vendor/
+
+# Ignorar a pasta de cache
+src/Service/cache/

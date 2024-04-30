@@ -5,12 +5,16 @@ namespace MyProject\Service;
 use Doctrine\ORM\EntityManager;
 use MyProject\Entity\Customer;
 use MyProject\Interface\CustomerServiceInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class CustomerService implements CustomerServiceInterface {
     private $entityManager;
+    private $cache;
 
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager, FilesystemAdapter $cache) {
         $this->entityManager = $entityManager;
+        $this->cache = $cache;
     }
 
     public function createCustomer(array $data): array {
@@ -29,6 +33,7 @@ class CustomerService implements CustomerServiceInterface {
         try {
             $this->entityManager->persist($customer);
             $this->entityManager->flush();
+            $this->cache->delete('customer_list_cache'); // Clear cache
 
             return ['httpCode' => 201, 'body' => json_encode(['success' => true, 'message' => 'Cliente criado com sucesso com ID ' . $customer->getId()])];
         } catch (\Exception $e) {
@@ -38,10 +43,12 @@ class CustomerService implements CustomerServiceInterface {
     }
 
     public function listCustomers(): array {
-        try {
+        $cacheKey = 'customer_list_cache';
+
+        $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) {
+            $item->expiresAfter(3600); // Cache duration
             $customers = $this->entityManager->getRepository(Customer::class)->findAll();
             $customerList = [];
-
             foreach ($customers as $customer) {
                 $customerList[] = [
                     'id' => $customer->getId(),
@@ -52,35 +59,32 @@ class CustomerService implements CustomerServiceInterface {
                     'address' => $customer->getAddress()
                 ];
             }
+            return $customerList;
+        });
 
-            return ['httpCode' => 200, 'body' => json_encode($customerList)];
-        } catch (\Exception $e) {
-            http_response_code(500);
-            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao listar clientes: ' . $e->getMessage()])];
-        }
+        return ['httpCode' => 200, 'body' => json_encode($cachedData)];
     }
 
     public function showCustomer(int $id): array {
-        try {
-            $customer = $this->entityManager->find(Customer::class, $id);
+        $cacheKey = "customer_$id"; // Specific cache for each customer
 
+        $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) use ($id) {
+            $item->expiresAfter(3600); // Cache duration
+            $customer = $this->entityManager->find(Customer::class, $id);
             if (!$customer) {
-                http_response_code(404);
                 return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => 'Cliente não encontrado.'])];
             }
-
-            return ['httpCode' => 200, 'body' => json_encode([
+            return [
                 'id' => $customer->getId(),
                 'name' => $customer->getName(),
                 'cpf' => $customer->getCpf(),
                 'email' => $customer->getEmail(),
                 'cep' => $customer->getCep(),
                 'address' => $customer->getAddress()
-            ])];
-        } catch (\Exception $e) {
-            http_response_code(500);
-            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao buscar cliente: ' . $e->getMessage()])];
-        }
+            ];
+        });
+
+        return ['httpCode' => 200, 'body' => json_encode($cachedData)];
     }
 
     public function updateCustomer(int $id, array $data): array {
@@ -108,6 +112,7 @@ class CustomerService implements CustomerServiceInterface {
             }
 
             $this->entityManager->flush();
+            $this->cache->delete('customer_list_cache');
 
             return ['httpCode' => 200, 'body' => json_encode(['success' => true, 'message' => 'Cliente atualizado com sucesso.'])];
         } catch (\Exception $e) {
@@ -127,6 +132,8 @@ class CustomerService implements CustomerServiceInterface {
 
             $this->entityManager->remove($customer);
             $this->entityManager->flush();
+            $this->cache->delete('customer_list_cache');
+
 
             return ['httpCode' => 200, 'body' => json_encode(['success' => true, 'message' => 'Cliente excluído com sucesso.'])];
         } catch (\Exception $e) {

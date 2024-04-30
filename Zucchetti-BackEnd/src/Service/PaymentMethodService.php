@@ -5,15 +5,22 @@ namespace MyProject\Service;
 use Doctrine\ORM\EntityManager;
 use MyProject\Entity\PaymentMethod;
 use MyProject\Interface\PaymentMethodServiceInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
-class PaymentMethodService implements PaymentMethodServiceInterface {
+class PaymentMethodService implements PaymentMethodServiceInterface
+{
     private $entityManager;
+    private $cache;
 
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager, FilesystemAdapter $cache)
+    {
         $this->entityManager = $entityManager;
+        $this->cache = $cache;
     }
 
-    public function createPaymentMethod(array $data): array {
+    public function createPaymentMethod(array $data): array
+    {
         if (!isset($data['name'], $data['installments'])) {
             return ['httpCode' => 400, 'body' => json_encode(['success' => false, 'error' => 'Dados faltando para nome ou parcelas.'])];
         }
@@ -26,17 +33,22 @@ class PaymentMethodService implements PaymentMethodServiceInterface {
             $this->entityManager->persist($paymentMethod);
             $this->entityManager->flush();
 
+            $this->cache->delete('payment_method_list_cache');
+
             return ['httpCode' => 201, 'body' => json_encode(['success' => true, 'message' => 'Método de pagamento criado com sucesso com ID ' . $paymentMethod->getId()])];
         } catch (\Exception $e) {
             return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao criar método de pagamento: ' . $e->getMessage()])];
         }
     }
 
-    public function listPaymentMethods(): array {
-        try {
+    public function listPaymentMethods(): array
+    {
+        $cacheKey = 'payment_method_list_cache';
+
+        $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) {
+            $item->expiresAfter(3600);
             $paymentMethods = $this->entityManager->getRepository(PaymentMethod::class)->findAll();
             $paymentMethodList = [];
-
             foreach ($paymentMethods as $paymentMethod) {
                 $paymentMethodList[] = [
                     'id' => $paymentMethod->getId(),
@@ -44,32 +56,43 @@ class PaymentMethodService implements PaymentMethodServiceInterface {
                     'installments' => $paymentMethod->getInstallments()
                 ];
             }
+            return $paymentMethodList;
+        });
 
-            return ['httpCode' => 200, 'body' => json_encode($paymentMethodList)];
-        } catch (\Exception $e) {
-            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao listar métodos de pagamento: ' . $e->getMessage()])];
+        if ($cachedData === false) {
+            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao recuperar dados do cache.'])];
         }
+
+        if (!is_array($cachedData)) {
+            $cachedData = json_decode($cachedData, true);
+        }
+
+        return ['httpCode' => 200, 'body' => json_encode($cachedData)];
     }
 
-    public function showPaymentMethod(int $id): array {
-        try {
-            $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
 
+    public function showPaymentMethod(int $id): array
+    {
+        $cacheKey = "payment_method_$id";
+
+        $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) use ($id) {
+            $item->expiresAfter(3600);
+            $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
             if (!$paymentMethod) {
                 return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => 'Método de pagamento não encontrado.'])];
             }
-
-            return ['httpCode' => 200, 'body' => json_encode([
+            return [
                 'id' => $paymentMethod->getId(),
                 'name' => $paymentMethod->getName(),
                 'installments' => $paymentMethod->getInstallments()
-            ])];
-        } catch (\Exception $e) {
-            return ['httpCode' => 500, 'body' => json_encode(['success' => false, 'error' => 'Erro ao exibir método de pagamento: ' . $e->getMessage()])];
-        }
+            ];
+        });
+
+        return ['httpCode' => 200, 'body' => json_encode($cachedData)];
     }
 
-    public function updatePaymentMethod(int $id, array $data): array {
+    public function updatePaymentMethod(int $id, array $data): array
+    {
         try {
             $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
             if (!$paymentMethod) {
@@ -84,6 +107,8 @@ class PaymentMethodService implements PaymentMethodServiceInterface {
             }
 
             $this->entityManager->flush();
+            $this->cache->delete('payment_method_list_cache');
+
 
             return ['httpCode' => 200, 'body' => json_encode(['success' => true, 'message' => 'Método de pagamento atualizado com sucesso.'])];
         } catch (\Exception $e) {
@@ -91,7 +116,8 @@ class PaymentMethodService implements PaymentMethodServiceInterface {
         }
     }
 
-    public function deletePaymentMethod(int $id): array {
+    public function deletePaymentMethod(int $id): array
+    {
         try {
             $paymentMethod = $this->entityManager->find(PaymentMethod::class, $id);
 
@@ -101,6 +127,7 @@ class PaymentMethodService implements PaymentMethodServiceInterface {
 
             $this->entityManager->remove($paymentMethod);
             $this->entityManager->flush();
+            $this->cache->delete('payment_method_list_cache');
 
             return ['httpCode' => 200, 'body' => json_encode(['success' => true, 'message' => 'Método de pagamento excluído com sucesso.'])];
         } catch (\Exception $e) {
