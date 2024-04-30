@@ -4,8 +4,14 @@
     <h1>CLIENTES</h1>
     <div class="card">
       <div class="search-section">
-        <input type="text" placeholder="Pesquise por nome, cpf ou email" v-model="searchQuery" />
-        <button @click="openNewCustomerModal">NOVO</button>
+        <input
+          id="search"
+          type="text"
+          placeholder="PESQUISE POR NOME, CPF OU E-MAIL"
+          v-model="searchQuery"
+          class="search-input"
+        />
+        <button class="button-style" @click="openNewCustomerModal">NOVO</button>
       </div>
       <table>
         <tr>
@@ -20,13 +26,13 @@
         <tr v-for="customer in filteredCustomers" :key="customer.id">
           <td>{{ customer.id }}</td>
           <td>{{ customer.name }}</td>
-          <td>{{ customer.cpf }}</td>
+          <td>{{ formatCpf(customer.cpf) }}</td>
           <td>{{ customer.address }}</td>
           <td>{{ customer.email }}</td>
           <td>{{ customer.cep }}</td>
-          <td>
-            <button @click="openEditCustomerModal(customer)">Editar</button>
-            <button @click="deleteCustomer(customer.id)">Deletar</button>
+          <td class="button-container">
+            <button class="button-style" @click="openEditCustomerModal(customer)">EDITAR</button>
+            <button class="button-style" @click="deleteCustomer(customer.id)">DELETAR</button>
           </td>
         </tr>
       </table>
@@ -63,12 +69,15 @@ export default {
     this.fetchCustomers()
   },
   methods: {
+    formatCpf(cpf) {
+      return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    },
     openNewCustomerModal() {
-      this.currentCustomer = { name: '', cpf: '', email: '', cep: '', address: '' } // Dados vazios para novo cliente
+      this.currentCustomer = { name: '', cpf: '', email: '', cep: '', address: '' }
       this.showModal = true
     },
     openEditCustomerModal(customer) {
-      this.currentCustomer = { ...customer } // Preenche os dados com o cliente existente para edição
+      this.currentCustomer = { ...customer }
       this.showModal = true
     },
     closeModal() {
@@ -98,12 +107,14 @@ export default {
   },
   computed: {
     filteredCustomers() {
-      return this.customers.filter(
-        (customer) =>
-          customer.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          customer.cpf.includes(this.searchQuery) ||
-          customer.email.toLowerCase().includes(this.searchQuery.toLowerCase())
-      )
+      return this.customers
+        .filter(
+          (customer) =>
+            customer.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            customer.cpf.includes(this.searchQuery) ||
+            customer.email.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        .sort((a, b) => a.id - b.id)
     }
   }
 }
@@ -113,18 +124,70 @@ export default {
 .customers-container {
   text-align: center;
   width: 100%;
+  font-family: var(--fonte-padrao);
 }
 
 .card {
   width: 80%;
   margin: auto;
-  background-color: #f5f5f5;
+  background-color: var(--cinza);
   padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .search-section {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  margin-right: 10px;
+  padding: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: auto;
+  background-color: #ffffff;
+}
+
+th,
+td {
+  border: 1px solid var(--preto);
+  padding: 12px;
+  text-align: left;
+  color: var(--fonte-fundo-branco);
+}
+
+th {
+  background-color: var(--azul-zucchetti);
+  color: var(--fonte-fundo-azul);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--cinza);
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.button-style {
+  background-color: var(--preto);
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.button-style:hover {
+  background-color: #1d2127;
 }
 </style>

@@ -2,17 +2,19 @@
   <div class="sales-container">
     <Navbar />
     <h1>VENDAS</h1>
-
-    <select v-model="selectedCustomerId" @change="fetchSalesByCustomer">
-      <option value="">Selecione um Cliente</option>
-      <option v-for="customer in customersSelect" :key="customer.id" :value="customer.id">
-        {{ customer.name }}
-      </option>
-    </select>
-    <button @click="clearFilter">Limpar Filtro</button>
-
-    <button @click="gotoNewSale">Nova Venda</button>
     <div class="card">
+      <div class="search-section">
+        <button class="button-style clear-filter" @click="clearFilter">LIMPAR FILTRO</button>
+
+        <select class="search-input" v-model="selectedCustomerId" @change="fetchSalesByCustomer">
+          <option value="">Selecione um Cliente</option>
+          <option v-for="customer in customersSelect" :key="customer.id" :value="customer.id">
+            {{ customer.name }}
+          </option>
+        </select>
+
+        <button class="button-style new-sale" @click="gotoNewSale">NOVA VENDA</button>
+      </div>
       <table>
         <thead>
           <tr>
@@ -37,9 +39,11 @@
               </ul>
             </td>
             <td>{{ calculateTotalPrice(sale.items) }}</td>
-            <td>
-              <button @click="editSale(sale)">Edit</button>
-              <button @click="deleteSale(sale.id)">Delete</button>
+            <td class="action-cell">
+              <div class="button-container">
+                <button class="button-style" @click="editSale(sale)">EDITAR</button>
+                <button class="button-style" @click="deleteSale(sale.id)">DELETAR</button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -292,29 +296,86 @@ export default {
 .sales-container {
   text-align: center;
   width: 100%;
+  font-family: var(--fonte-padrao);
 }
 
 .card {
   width: 80%;
   margin: auto;
-  background-color: #f5f5f5;
+  background-color: var(--cinza);
   padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
+}
+
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  margin: 0 10px;
+  padding: 10px;
+  border: 1px solid var(--preto);
+  border-radius: 4px;
+}
+
+.clear-filter,
+.new-sale {
+  flex-basis: 15%;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  margin: auto;
+  background-color: #ffffff;
 }
 
 th,
 td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border: 1px solid var(--preto);
+  padding: 12px;
   text-align: left;
+  color: var(--fonte-fundo-branco);
 }
 
-thead {
-  background-color: #eee;
+th {
+  background-color: var(--azul-zucchetti);
+  color: var(--fonte-fundo-azul);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--cinza);
+}
+
+td.action-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.button-style {
+  background-color: var(--preto);
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.button-style:hover {
+  background-color: #1d2127;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 </style>

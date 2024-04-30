@@ -3,18 +3,20 @@
     <div class="modal-content">
       <span class="close" @click="close">&times;</span>
       <h2>{{ method.id ? 'Editar Método' : 'Adicionar Novo Método' }}</h2>
-      <form @submit.prevent="submitForm">
-        <label for="name">Nome:</label>
-        <input id="name" v-model="method.name" required />
-
-        <label for="installments">Parcelas Máximas:</label>
-        <input id="installments" type="number" v-model="method.installments" required />
-
-        <div class="modal-buttons">
-          <button type="submit">{{ method.id ? 'Atualizar' : 'Salvar' }}</button>
-          <button type="button" @click="close">Fechar</button>
-        </div>
-      </form>
+      <div class="form-container">
+          <form @submit.prevent="submitForm">
+            <label for="name">Nome:</label>
+            <input class="input-style" id="name" v-model="method.name" required />
+            
+            <label for="installments">Parcelas Máximas:</label>
+            <input class="input-style"  id="installments" type="number" v-model="method.installments" required />
+            
+            <div class="modal-buttons">
+                <button class="button-style" type="submit">{{ method.id ? 'ATUALIZAR' : 'SALVAR' }}</button>
+                <button class="button-style" type="button" @click="close">FECHAR</button>
+            </div>
+        </form>
+    </div>
     </div>
   </div>
 </template>
@@ -32,7 +34,6 @@ export default {
       this.$emit('close')
     },
     async submitForm() {
-      // Garante que o ID seja incluído na URL para a atualização
       let url = this.method.id
         ? `http://localhost:8000/payment-method/update?id=${this.method.id}`
         : `http://localhost:8000/payment-method/create`
@@ -45,13 +46,13 @@ export default {
         if (response.data.success) {
           alert(response.data.message)
           this.close()
-          this.$emit('refresh') // Atualiza a lista após a modificação
+          this.$emit('refresh')
         } else {
-          alert('Erro: ' + response.data.error) // Mostra o erro do servidor se houver falha
+          alert('Erro: ' + response.data.error)
         }
       } catch (error) {
         console.error('Erro ao salvar método de pagamento:', error)
-        alert('Falha ao salvar método de pagamento.') // Mensagem genérica para falhas na requisição
+        alert('Falha ao salvar método de pagamento.')
       }
     }
   }
@@ -84,15 +85,42 @@ export default {
   top: 10px;
   right: 14px;
   font-size: 24px;
+  color: var(--preto);
 }
 
-.modal-buttons {
+.form-container { /* Centralização do formulário */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.input-style { /* Estilo aplicado nos inputs */
+  width: 90%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--cinza);
+  border-radius: 4px;
+}
+
+.modal-buttons { /* Estilo aplicado nos botões */
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
 }
 
-button {
+.button-style { /* Estilo uniforme para os botões */
+  background-color: var(--preto);
+  color: #ffffff;
   padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  width: 48%; /* Ajuste para manter os botões lado a lado com espaço */
+}
+
+.button-style:hover {
+  background-color: #1d2127;
 }
 </style>

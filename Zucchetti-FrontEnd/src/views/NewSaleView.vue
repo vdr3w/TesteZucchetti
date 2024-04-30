@@ -1,36 +1,43 @@
 <template>
+  <Navbar />
   <div class="new-sale-container">
     <h1>Cadastrar Nova Venda</h1>
+    <button @click="$router.push({ name: 'Sales' })" class="button-style">VOLTAR</button>
     <div class="cards">
       <div class="card">
         <h2>Dados da Venda</h2>
         <form @submit.prevent="submitSale">
-          <div>
+          <div class="form-group">
             <label for="customer">Nome do Cliente:</label>
-            <select id="customer" v-model="sale.customerId">
+            <select id="customer" v-model="sale.customerId" class="input-style input-select">
               <option v-for="customer in customers" :key="customer.id" :value="customer.id">
                 {{ customer.name }}
               </option>
             </select>
           </div>
-          <div>
+          <div class="form-group">
             <label for="paymentMethod">Forma de Pagamento:</label>
-            <select id="paymentMethod" v-model="sale.paymentMethodId">
+            <select
+              id="paymentMethod"
+              v-model="sale.paymentMethodId"
+              class="input-style input-select"
+            >
               <option v-for="method in paymentMethods" :key="method.id" :value="method.id">
                 {{ method.name }}
               </option>
             </select>
           </div>
-          <div>
+          <div class="form-group">
             <label for="installments">Parcelas:</label>
             <input
               type="number"
               id="installments"
               v-model="sale.installments"
               placeholder="Número de parcelas"
+              class="input-style input-number"
             />
           </div>
-          <div>
+          <div class="form-group">
             <label for="total">Valor Total:</label>
             <input
               type="number"
@@ -38,20 +45,34 @@
               :value="totalSale"
               placeholder="Valor total da venda"
               readonly
+              class="input-style input-number"
             />
           </div>
-          <button type="submit">Cadastrar</button>
+          <button class="button-style" type="submit">COMPRAR</button>
         </form>
       </div>
       <div class="card">
         <h2>Adicionar Produtos</h2>
-        <select v-model="selectedProduct">
-          <option v-for="product in products" :key="product.id" :value="product.id">
-            {{ product.name }}
-          </option>
-        </select>
-        <input type="number" v-model="selectedQuantity" min="1" placeholder="Qtd" />
-        <button @click="addProduct">ADD</button>
+        <div class="right-form-group">
+          <label for="productSelect">Escolha o Produto</label>
+          <select id="productSelect" v-model="selectedProduct" class="input-style input-select">
+            <option v-for="product in products" :key="product.id" :value="product.id">
+              {{ product.name }}
+            </option>
+          </select>
+        </div>
+        <div class="right-form-group">
+          <label for="productQuantity">Digite a Quantidade</label>
+          <input
+            id="productQuantity"
+            type="number"
+            v-model="selectedQuantity"
+            min="1"
+            placeholder="Qtd"
+            class="input-style input-number"
+          />
+        </div>
+        <button class="button-style" @click="addProduct">ADICIONAR PRODUTO</button>
         <ul>
           <li v-for="(product, index) in addedProducts" :key="index">
             {{ product.name }} - Quantidade: {{ product.quantity }} - Total: R$
@@ -65,9 +86,13 @@
 
 <script>
 import axios from 'axios'
+import Navbar from '@/components/Navbar.vue'
 
 export default {
   name: 'NewSaleView',
+  components: {
+    Navbar
+  },
   data() {
     return {
       sale: {
@@ -123,23 +148,19 @@ export default {
         })
     },
     submitSale() {
-      // Cria o payload com os dados corretos para a requisição
       const payload = {
-        customerId: this.sale.customerId, // Assegura que estamos passando o ID do cliente
-        paymentMethodId: this.sale.paymentMethodId, // Assegura que estamos passando o ID do método de pagamento
+        customerId: this.sale.customerId,
+        paymentMethodId: this.sale.paymentMethodId,
         items: this.addedProducts.map((p) => ({
-          productId: p.id, // Assegura que estamos passando o ID do produto
+          productId: p.id,
           quantity: p.quantity
         })),
-        installments: this.sale.installments // Assegura que o número de parcelas seja passado corretamente
+        installments: this.sale.installments
       }
-
-      // Faz a requisição de criação da venda
       axios
         .post('http://localhost:8000/sale/create', payload)
         .then((response) => {
           if (response.data.success) {
-            // Formata a mensagem para incluir detalhes sobre parcelas e o valor de cada parcela
             const message = `Venda criada com sucesso com ID ${response.data.message.match(/ID (\d+)/)[1]}, Total: R$${response.data.message.match(/Total: \$(\d+\.\d+)/)[1]}
 Parcelas: ${response.data.installments}, Valor por parcela: R$${response.data.installmentAmount}`
             alert(message)
@@ -179,12 +200,15 @@ Parcelas: ${response.data.installments}, Valor por parcela: R$${response.data.in
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 20px;
+  justify-content: center;
 }
 
 .cards {
   display: flex;
   justify-content: space-around;
   width: 100%;
+  max-width: 1200px;
 }
 
 .card {
@@ -192,10 +216,62 @@ Parcelas: ${response.data.installments}, Valor por parcela: R$${response.data.in
   margin: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
+  background-color: var(--cinza);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-button {
+.form-group {
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.right-form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.input-style {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid var(--preto);
+}
+
+.input-select {
+  max-width: 300px;
+}
+
+.input-number {
+  max-width: 180px;
+}
+
+.button-style {
+  padding: 10px 15px;
+  background-color: var(--preto);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
   margin-top: 10px;
+}
+
+.button-style:hover {
+  background-color: #1d2127;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 5px 0;
 }
 </style>
