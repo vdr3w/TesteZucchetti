@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 
 export default {
   props: {
@@ -39,7 +39,7 @@ export default {
         : `http://localhost:8000/payment-method/create`
 
       try {
-        const response = await axios.post(url, {
+        const response = await api.post(url, {
           name: this.method.name,
           installments: this.method.installments
         })
