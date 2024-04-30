@@ -1,6 +1,31 @@
+:root {
+  --azul-zucchetti: #0072bc;
+  --preto: #1d2127;
+  --cinza: #d4d4d4;
+
+  --fonte-fundo-azul: #c6d4ee;
+  --fonte-fundo-branco: #2e353e;
+
+  --fonte-padrao: 'Roboto', Arial, sans-serif;
+}
+
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: var(--fonte-padrao);
+  color: var(--fonte-fundo-branco);
   background-color: white;
-  color: #333;
+}
+
+.fundo-azul {
+  background-color: var(--azul-zucchetti);
+  color: var(--fonte-fundo-azul);
+}
+
+.fundo-preto {
+  background-color: var(--preto);
+  color: var(--fonte-fundo-branco);
+}
+
+.botoes {
+  background-color: var(--preto);
+  color: var(--fonte-fundo-branco);
 }
