@@ -2,6 +2,15 @@
   <div class="sales-container">
     <Navbar />
     <h1>VENDAS</h1>
+
+    <select v-model="selectedCustomerId" @change="fetchSalesByCustomer">
+      <option value="">Selecione um Cliente</option>
+      <option v-for="customer in customersSelect" :key="customer.id" :value="customer.id">
+        {{ customer.name }}
+      </option>
+    </select>
+    <button @click="clearFilter">Limpar Filtro</button>
+
     <button @click="gotoNewSale">Nova Venda</button>
     <div class="card">
       <table>
@@ -61,11 +70,13 @@ export default {
     return {
       sales: [],
       paymentMethods: {},
+      customersSelect: [],
       customers: {},
       products: {},
       editModalVisible: false,
       currentSale: null,
-      modalPaymentMethods: {}
+      modalPaymentMethods: {},
+      selectedCustomerId: ''
     }
   },
   methods: {
@@ -132,11 +143,35 @@ export default {
           this.editModalVisible = false
         })
     },
+    fetchSalesByCustomer() {
+      if (this.selectedCustomerId) {
+        axios
+          .get(`http://localhost:8000/sale/listByCustomer?customerId=${this.selectedCustomerId}`)
+          .then((response) => {
+            if (response.data.length === 0) {
+              this.sales = []
+              alert('Este cliente não possui vendas realizadas.')
+            } else {
+              this.sales = response.data
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching sales by customer:', error)
+            alert('Falha ao carregar vendas para o cliente selecionado.')
+          })
+      } else {
+        this.fetchSales()
+      }
+    },
+    clearFilter() {
+      this.selectedCustomerId = ''
+      this.fetchSales()
+    },
     fetchSales() {
       axios
         .get('http://localhost:8000/sale/list')
         .then((response) => {
-          this.sales = response.data.sort((a, b) => a.id - b.id) // Ordena as vendas pelo ID
+          this.sales = response.data.sort((a, b) => a.id - b.id)
           this.fetchPaymentMethods()
           this.fetchCustomers()
           this.fetchProducts()
@@ -170,6 +205,16 @@ export default {
         })
         .catch((error) => {
           console.error('Error fetching customers:', error)
+        })
+    },
+    fetchCustomersForSelect() {
+      axios
+        .get('http://localhost:8000/customer/list')
+        .then((response) => {
+          this.customersSelect = response.data
+        })
+        .catch((error) => {
+          console.error('Error fetching customers for select:', error)
         })
     },
     fetchProducts() {
@@ -207,7 +252,7 @@ export default {
         .then((response) => {
           if (response.data.success) {
             alert('Venda excluída com sucesso.')
-            this.fetchSales() // Recarrega as vendas após a exclusão
+            this.fetchSales()
           } else {
             alert(response.data.error)
           }
@@ -218,7 +263,7 @@ export default {
         })
     },
     gotoNewSale() {
-      this.$router.push({ name: 'NewSale' }) // Redireciona para a nova view
+      this.$router.push({ name: 'NewSale' })
     },
     fetchModalPaymentMethods() {
       axios
@@ -237,6 +282,8 @@ export default {
   created() {
     this.fetchSales()
     this.fetchModalPaymentMethods()
+    this.fetchCustomers()
+    this.fetchCustomersForSelect()
   }
 }
 </script>
