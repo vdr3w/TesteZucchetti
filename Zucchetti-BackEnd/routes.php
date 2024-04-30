@@ -14,23 +14,24 @@ use MyProject\Service\SaleService;
 use MyProject\Entity\AuthToken;
 use MyProject\Entity\BUser;
 use MyProject\Service\AuthService;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
 
 $entityManager = GetEntityManager();
 
-// Criando instâncias de serviços
-$productService = new ProductService($entityManager);
-$customerService = new CustomerService($entityManager);
-$paymentMethodService = new PaymentMethodService($entityManager);
-$saleService = new SaleService($entityManager);
-$authService = new AuthService($entityManager);  // Certifique-se de passar o EntityManager
+$cache = new FilesystemAdapter('', 0, __DIR__ . '/src/Service/cache');
 
-// Instanciando os controladores com as interfaces de serviço
+$productService = new ProductService($entityManager, $cache);
+$customerService = new CustomerService($entityManager, $cache);
+$paymentMethodService = new PaymentMethodService($entityManager, $cache);
+$saleService = new SaleService($entityManager);
+$authService = new AuthService($entityManager);
+
 $productController = new ProductController($productService);
 $customerController = new CustomerController($customerService);
 $paymentMethodController = new PaymentMethodController($paymentMethodService);
 $saleController = new SaleController($saleService);
 
-// Função de Middleware para verificar a autenticação
 function isAuthenticated()
 {
     global $authService;
