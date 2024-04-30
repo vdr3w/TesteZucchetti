@@ -11,5 +11,4 @@ export default {
 </script>
 
 <style>
-/* Seus estilos globais ou reset de CSS */
 </style>
