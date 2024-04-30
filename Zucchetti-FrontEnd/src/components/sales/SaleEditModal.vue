@@ -2,32 +2,37 @@
   <div v-if="visible" class="modal">
     <div class="modal-content">
       <span @click="closeModal" class="close">&times;</span>
-      <h2>Edit Sale</h2>
-      <form @submit.prevent="submitForm">
-        <div>
-          <label>Customer ID:</label>
-          <span>{{ sale.customerDetails.id }}</span>
-        </div>
-        <div>
-          <label>Customer Name:</label>
-          <span>{{ sale.customerDetails.name }}</span>
-        </div>
-        <div>
-          <label for="paymentMethodId">Payment Method:</label>
-          <select id="paymentMethodId" v-model="sale.paymentMethodId">
-            <option v-for="(name, id) in paymentMethods" :key="id" :value="id">
-              {{ name }}
-            </option>
-          </select>
-        </div>
-        <div v-for="(item, index) in sale.items" :key="index">
-          <label>Product ID:</label>
-          <input type="number" v-model="item.productId" />
-          <label>Quantity:</label>
-          <input type="number" v-model="item.quantity" />
-        </div>
-        <button type="submit">Update Sale</button>
-      </form>
+      <h2>EDITAR VENDA</h2>
+      <div class="form-container">
+        <form @submit.prevent="submitForm">
+          <div class="text-edit">
+            <label>ID do Cliente: </label>
+            <span>{{ sale.customerDetails.id }}</span>
+          </div>
+          <div class="text-edit">
+            <label>Nome: </label>
+            <span>{{ sale.customerDetails.name }}</span>
+          </div>
+          <div>
+            <label for="paymentMethodId">Método de Pagamento</label>
+            <select class="input-style" id="paymentMethodId" v-model="sale.paymentMethodId">
+              <option v-for="(name, id) in paymentMethods" :key="id" :value="id">
+                {{ name }}
+              </option>
+            </select>
+          </div>
+          <div v-for="(item, index) in sale.items" :key="index">
+            <label>Produto [ID]:</label>
+            <input class="input-style" type="number" v-model="item.productId" />
+            <label>Quantidade:</label>
+            <input class="input-style" type="number" v-model="item.quantity" />
+          </div>
+          <div class="modal-buttons">
+            <button class="button-style" type="submit">ATUALIZAR VENDA</button>
+            <button class="button-style" type="button" @click="closeModal">FECHAR</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -44,9 +49,9 @@ export default {
       this.$emit('close')
     },
     submitForm(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.$emit('submit', this.sale);
+      event.preventDefault()
+      event.stopPropagation()
+      this.$emit('submit', this.sale)
     }
   }
 }
@@ -54,37 +59,70 @@ export default {
 
 <style scoped>
 .modal {
-  display: flex;
   position: fixed;
-  z-index: 1;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
-  background-color: #fefefe;
-  margin: auto;
+  background: white;
   padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
+  border-radius: 5px;
+  width: 300px;
 }
 
 .close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 24px;
+  color: var(--preto);
 }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.input-style {
+  width: 90%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--cinza);
+  border-radius: 4px;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-style {
+  background-color: var(--preto);
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: 0.3s ease;
+  width: 48%;
+}
+
+.button-style:hover {
+  background-color: #1d2127;
+}
+
+.text-edit {
+  margin-bottom: 10px;
 }
 </style>
