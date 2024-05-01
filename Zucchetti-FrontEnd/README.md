@@ -1,15 +1,4 @@
 # Zucchetti-FrontEnd
- 
-## 📚 Linguagens Utilizadas
-
-![HTML5](https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=black)
-![CSS3](https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=black)
-![Javascript](https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![VueJS](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
-
-## Introdução
-📖 Bem-vindo ao DevInGym, uma inovação da FitManage Tech, criada com o objetivo de revolucionar o gerenciamento de treinos em academias. Como aluno do programa DevInHouse 2023, da turma Zucchetti, tive a oportunidade de mergulhar no mundo do desenvolvimento web e, neste documento, você encontrará uma descrição detalhada do projeto, desde sua concepção até sua implementação. 📖
 
 ## Instruções de Instalação
 1. 🛠️ **Baixar o Projeto**:
