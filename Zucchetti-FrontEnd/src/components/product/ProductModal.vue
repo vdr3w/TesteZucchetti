@@ -9,7 +9,7 @@
           <input class="input-style" id="name" v-model="product.name" required />
 
           <label for="price">Preço:</label>
-          <input class="input-style" id="price" type="number" v-model="product.price" required />
+          <input class="input-style" id="price" type="number" step="0.01" v-model.number="product.price" required />
 
           <label for="quantity">Quantidade:</label>
           <input
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 
 export default {
   props: {
@@ -46,10 +46,10 @@ export default {
     },
     async submitForm() {
       let url = this.product.id
-        ? `http://localhost:8000/product/update`
-        : `http://localhost:8000/product/create`
+        ? `/product/update`
+        : `/product/create`
       try {
-        const response = await axios.post(url, this.product)
+        const response = await api.post(url, this.product)
         alert(response.data.message)
         this.close()
         this.$emit('refresh')

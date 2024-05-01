@@ -7,6 +7,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 require_once "vendor/autoload.php";
 
@@ -27,6 +28,23 @@ $config = ORMSetup::createAttributeMetadataConfiguration(
     [__DIR__ . "/src"], 
     $isDevMode
 );
+
+$cache = new FilesystemAdapter('', 0, __DIR__ . '/src/Service/cache');
+
+$config->setMetadataCache($cache);
+$config->setQueryCache($cache); 
+$config->setResultCache($cache); 
+
+$conn = DriverManager::getConnection([
+    'driver'   => 'pdo_pgsql',
+    'host'     => 'localhost',
+    'port'     => '5432',
+    'dbname'   => 'DBZucchetti',
+    'user'     => 'admin',
+    'password' => 'admin',
+], $config);
+
+$entityManager = new EntityManager($conn, $config);
 
 $conn = DriverManager::getConnection([
     'driver'   => 'pdo_pgsql',

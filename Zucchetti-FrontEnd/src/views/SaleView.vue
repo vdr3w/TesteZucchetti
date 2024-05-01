@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 import SaleEditModal from '@/components/sales/SaleEditModal.vue'
 import Navbar from '@/components/Navbar.vue'
 
@@ -91,8 +91,8 @@ export default {
         return
       }
 
-      axios
-        .get(`http://localhost:8000/customer/show?id=${sale.customer}`)
+      api
+        .get(`/customer/show?id=${sale.customer}`)
         .then((response) => {
           this.currentSale = {
             ...sale,
@@ -123,8 +123,8 @@ export default {
         return
       }
 
-      axios
-        .post(`http://localhost:8000/sale/update?id=${updatedSale.id}`, {
+      api
+        .post(`/sale/update?id=${updatedSale.id}`, {
           customerId: updatedSale.customerDetails.id,
           paymentMethodId: updatedSale.paymentMethodId,
           items: updatedSale.items.map((item) => ({
@@ -149,8 +149,8 @@ export default {
     },
     fetchSalesByCustomer() {
       if (this.selectedCustomerId) {
-        axios
-          .get(`http://localhost:8000/sale/listByCustomer?customerId=${this.selectedCustomerId}`)
+        api
+          .get(`/sale/listByCustomer?customerId=${this.selectedCustomerId}`)
           .then((response) => {
             if (response.data.length === 0) {
               this.sales = []
@@ -172,8 +172,8 @@ export default {
       this.fetchSales()
     },
     fetchSales() {
-      axios
-        .get('http://localhost:8000/sale/list')
+      api
+        .get('/sale/list')
         .then((response) => {
           this.sales = response.data.sort((a, b) => a.id - b.id)
           this.fetchPaymentMethods()
@@ -186,8 +186,8 @@ export default {
         })
     },
     fetchPaymentMethods() {
-      axios
-        .get('http://localhost:8000/payment-method/list')
+      api
+        .get('/payment-method/list')
         .then((response) => {
           this.paymentMethods = response.data.reduce((acc, method) => {
             acc[method.id] = method.name
@@ -199,8 +199,8 @@ export default {
         })
     },
     fetchCustomers() {
-      axios
-        .get('http://localhost:8000/customer/list')
+      api
+        .get('/customer/list')
         .then((response) => {
           this.customers = response.data.reduce((acc, customer) => {
             acc[customer.id] = customer.name
@@ -212,8 +212,8 @@ export default {
         })
     },
     fetchCustomersForSelect() {
-      axios
-        .get('http://localhost:8000/customer/list')
+      api
+        .get('/customer/list')
         .then((response) => {
           this.customersSelect = response.data
         })
@@ -222,8 +222,8 @@ export default {
         })
     },
     fetchProducts() {
-      axios
-        .get('http://localhost:8000/product/list')
+      api
+        .get('/product/list')
         .then((response) => {
           this.products = response.data.reduce((acc, product) => {
             acc[product.id] = { name: product.name, price: product.price }
@@ -251,8 +251,8 @@ export default {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)
     },
     deleteSale(id) {
-      axios
-        .post(`http://localhost:8000/sale/delete?id=${id}`)
+      api
+        .post(`/sale/delete?id=${id}`)
         .then((response) => {
           if (response.data.success) {
             alert('Venda excluída com sucesso.')
@@ -270,8 +270,8 @@ export default {
       this.$router.push({ name: 'NewSale' })
     },
     fetchModalPaymentMethods() {
-      axios
-        .get('http://localhost:8000/payment-method/list')
+      api
+        .get('/payment-method/list')
         .then((response) => {
           this.modalPaymentMethods = response.data.reduce((acc, method) => {
             acc[method.id] = method.name

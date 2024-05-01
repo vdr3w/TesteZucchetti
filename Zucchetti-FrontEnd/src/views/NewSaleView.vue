@@ -17,11 +17,7 @@
           </div>
           <div class="form-group">
             <label for="paymentMethod">Forma de Pagamento:</label>
-            <select
-              id="paymentMethod"
-              v-model="sale.paymentMethodId"
-              class="input-style input-select"
-            >
+            <select id="paymentMethod" v-model="sale.paymentMethodId" class="input-style input-select">
               <option v-for="method in paymentMethods" :key="method.id" :value="method.id">
                 {{ method.name }}
               </option>
@@ -29,24 +25,13 @@
           </div>
           <div class="form-group">
             <label for="installments">Parcelas:</label>
-            <input
-              type="number"
-              id="installments"
-              v-model="sale.installments"
-              placeholder="Número de parcelas"
-              class="input-style input-number"
-            />
+            <input type="number" id="installments" v-model="sale.installments" placeholder="Número de parcelas"
+              class="input-style input-number" />
           </div>
           <div class="form-group">
             <label for="total">Valor Total:</label>
-            <input
-              type="number"
-              id="total"
-              :value="totalSale"
-              placeholder="Valor total da venda"
-              readonly
-              class="input-style input-number"
-            />
+            <input type="number" id="total" :value="totalSale" placeholder="Valor total da venda" readonly
+              class="input-style input-number" />
           </div>
           <button class="button-style" type="submit">COMPRAR</button>
         </form>
@@ -63,16 +48,13 @@
         </div>
         <div class="right-form-group">
           <label for="productQuantity">Digite a Quantidade</label>
-          <input
-            id="productQuantity"
-            type="number"
-            v-model="selectedQuantity"
-            min="1"
-            placeholder="Qtd"
-            class="input-style input-number"
-          />
+          <input id="productQuantity" type="number" v-model="selectedQuantity" min="1" placeholder="Qtd"
+            class="input-style input-number" />
         </div>
-        <button class="button-style" @click="addProduct">ADICIONAR PRODUTO</button>
+        <div class="modal-buttons">
+          <button class="button-style" @click="addProduct">ADICIONAR PRODUTO</button>
+          <button class="button-style" @click="clearAddedProducts">LIMPAR PRODUTOS</button>
+        </div>
         <ul>
           <li v-for="(product, index) in addedProducts" :key="index">
             {{ product.name }} - Quantidade: {{ product.quantity }} - Total: R$
@@ -85,7 +67,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/axios';
 import Navbar from '@/components/Navbar.vue'
 
 export default {
@@ -118,8 +100,8 @@ export default {
   },
   methods: {
     fetchProducts() {
-      axios
-        .get('http://localhost:8000/product/list')
+      api
+        .get('/product/list')
         .then((response) => {
           this.products = response.data
         })
@@ -128,8 +110,8 @@ export default {
         })
     },
     fetchPaymentMethods() {
-      axios
-        .get('http://localhost:8000/payment-method/list')
+      api
+        .get('/payment-method/list')
         .then((response) => {
           this.paymentMethods = response.data
         })
@@ -138,8 +120,8 @@ export default {
         })
     },
     fetchCustomers() {
-      axios
-        .get('http://localhost:8000/customer/list')
+      api
+        .get('/customer/list')
         .then((response) => {
           this.customers = response.data
         })
@@ -147,31 +129,39 @@ export default {
           console.error('Error fetching customers:', error)
         })
     },
+    clearAddedProducts() {
+      this.addedProducts = [];
+    },
     submitSale() {
+      if (!this.sale.customerId || !this.sale.paymentMethodId || !this.sale.installments || this.addedProducts.length === 0) {
+        alert('Todos os campos devem ser preenchidos corretamente.');
+        return;
+      }
+
       const payload = {
         customerId: this.sale.customerId,
         paymentMethodId: this.sale.paymentMethodId,
-        items: this.addedProducts.map((p) => ({
+        items: this.addedProducts.map(p => ({
           productId: p.id,
           quantity: p.quantity
         })),
         installments: this.sale.installments
-      }
-      axios
-        .post('http://localhost:8000/sale/create', payload)
-        .then((response) => {
-          if (response.data.success) {
-            const message = `Venda criada com sucesso com ID ${response.data.message.match(/ID (\d+)/)[1]}, Total: R$${response.data.message.match(/Total: \$(\d+\.\d+)/)[1]}
-Parcelas: ${response.data.installments}, Valor por parcela: R$${response.data.installmentAmount}`
-            alert(message)
-          } else {
-            alert(`Erro: ${response.data.error}`)
-          }
-        })
-        .catch((error) => {
-          console.error('Erro ao criar venda:', error)
-          alert('Falha ao criar venda.')
-        })
+      };
+
+      api.post('/sale/create', payload).then((response) => {
+        if (response.data.success) {
+          alert(response.data.message);
+        } else {
+          alert(`Erro: ${response.data.error}`);
+        }
+      }).catch((error) => {
+    // Certifique-se de que estamos lidando corretamente com a resposta de erro
+    const errorMessage = error.response && error.response.data && error.response.data.error
+      ? error.response.data.error
+      : 'Erro desconhecido ao criar venda.';
+    console.error('Erro ao criar venda:', errorMessage);
+    alert(errorMessage); // Exibe a mensagem de erro do backend
+  });
     },
     addProduct() {
       const product = this.products.find((p) => p.id === this.selectedProduct)
@@ -273,5 +263,12 @@ ul {
 
 li {
   padding: 5px 0;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  gap: 5px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
