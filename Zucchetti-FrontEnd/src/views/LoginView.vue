@@ -1,12 +1,15 @@
 <template>
+    <div class="login-wrapper">
   <div class="login-container">
-    <h1>Login</h1>
-    <form @submit.prevent="login">
-      <input v-model="username" type="text" placeholder="Username" required>
-      <input v-model="password" type="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+    <img src="https://www.zucchettibrasil.com.br/templates/website/img/logo.png" alt="Zucchetti Logo" class="logo">
+    <h1>#tamojunto</h1>
+    <form @submit.prevent="login" class="form-container">
+      <input v-model="username" type="text" placeholder="Username (ADMIN) *case sensitive" required class="search-input">
+      <input v-model="password" type="password" placeholder="Password (ADMIN) *case sensitive" required class="search-input">
+      <button class="buttons" type="submit">Login</button>
     </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -36,7 +39,6 @@ export default {
           localStorage.setItem('@tokenzucchetti', data.token);
           router.push('/clientes');
         } else if (response.status === 401) {
-          // Redireciona para a página de Não Autorizado em caso de credenciais inválidas
           router.push('/unauthorized');
         } else {
           alert('Login failed!');
@@ -57,10 +59,62 @@ export default {
 </script>
 
 <style scoped>
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ADD8E6;
+}
+
 .login-container {
-  max-width: 300px;
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.logo {
+  width: 80%;
+  max-height: 120px;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--preto);
+  border-radius: 4px;
+}
+
+.buttons {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--azul-zucchetti);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.buttons:hover {
+  background-color: darken(var(--azul-zucchetti), 10%);
 }
 </style>

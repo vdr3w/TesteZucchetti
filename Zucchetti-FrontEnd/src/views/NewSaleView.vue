@@ -155,12 +155,11 @@ export default {
           alert(`Erro: ${response.data.error}`);
         }
       }).catch((error) => {
-    // Certifique-se de que estamos lidando corretamente com a resposta de erro
     const errorMessage = error.response && error.response.data && error.response.data.error
       ? error.response.data.error
       : 'Erro desconhecido ao criar venda.';
     console.error('Erro ao criar venda:', errorMessage);
-    alert(errorMessage); // Exibe a mensagem de erro do backend
+    alert(errorMessage);
   });
     },
     addProduct() {
