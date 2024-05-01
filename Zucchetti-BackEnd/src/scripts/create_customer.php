@@ -19,7 +19,7 @@ $config->setAutoGenerateProxyClasses($isDevMode);
 
 $conn = [
     'driver'   => 'pdo_pgsql',
-    'host'     => 'localhost',
+    'host'     => 'postgres',
     'port'     => '5432', 
     'dbname'   => 'DBZucchetti',
     'user'     => 'admin',

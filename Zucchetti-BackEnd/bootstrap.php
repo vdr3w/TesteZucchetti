@@ -37,19 +37,8 @@ $config->setResultCache($cache);
 
 $conn = DriverManager::getConnection([
     'driver'   => 'pdo_pgsql',
-    'host'     => 'localhost',
+    'host'     => 'postgres',
     'port'     => '5432',
-    'dbname'   => 'DBZucchetti',
-    'user'     => 'admin',
-    'password' => 'admin',
-], $config);
-
-$entityManager = new EntityManager($conn, $config);
-
-$conn = DriverManager::getConnection([
-    'driver'   => 'pdo_pgsql',
-    'host'     => 'localhost',
-    'port'     => '5432', 
     'dbname'   => 'DBZucchetti',
     'user'     => 'admin',
     'password' => 'admin',
