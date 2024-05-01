@@ -1,3 +1,5 @@
+![Zucchetti](https://www.zucchettibrasil.com.br/templates/website/img/logo.png)
+
 # Teste Zucchetti - André Vieira
 
 Bem-vindo ao meu projeto Teste Zucchetti! Abaixo você encontrará instruções detalhadas sobre como configurar e executar tanto o frontend quanto o backend deste projeto. 
