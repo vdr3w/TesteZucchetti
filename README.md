@@ -13,11 +13,11 @@ Durante o desenvolvimento, tentei dockerizar completamente a aplicação, inclui
 
 Além disso, não consegui implementar uma forma automatizada de rodar os comandos do Doctrine SchemaTool para migração do banco de dados dentro do Docker. Portanto, a parte da dockerização ficou incompleta. Deixo claro que os servidores de backend e frontend foram iniciados, mas as funcionalidades completas não estavam disponíveis através desta configuração.
 
-Essas mudanças estão disponíveis apenas na branch 'feat-docker-setup'. Para acessar e ver como ficou minha tentativa de dockerização, é necessário mudar para essa branch.
+Essas mudanças estão disponíveis apenas na branch `feat-docker-setup`. Para acessar e ver como ficou minha tentativa de dockerização, é necessário mudar para essa branch.
 
 ### Dockerfiles e docker-compose.yml
 
-- **Frontend Dockerfile** (Localizado em `G:\TesteZucchetti\Zucchetti-BackEnd\Dockerfile`):
+- **Frontend Dockerfile** (Localizado em `\TesteZucchetti\Zucchetti-BackEnd\Dockerfile`):
   ```dockerfile
   FROM node:16
   WORKDIR /app
@@ -31,7 +31,7 @@ Essas mudanças estão disponíveis apenas na branch 'feat-docker-setup'. Para a
   CMD ["npm", "run", "dev"]
   ```
 
-- **Backend Dockerfile** (Localizado em `G:\TesteZucchetti\Zucchetti-FrontEnd\Dockerfile`):
+- **Backend Dockerfile** (Localizado em `\TesteZucchetti\Zucchetti-FrontEnd\Dockerfile`):
   ```dockerfile
   FROM php:8.3-apache
   RUN apt-get update and apt-get install -y git unzip libpq-dev libzip-dev netcat-openbsd \
@@ -48,7 +48,7 @@ Essas mudanças estão disponíveis apenas na branch 'feat-docker-setup'. Para a
   ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
   ```
 
-- **docker-compose.yml** (Localizado em `G:\TesteZucchetti\docker-compose.yml`):
+- **docker-compose.yml** (Localizado em `\TesteZucchetti\docker-compose.yml`):
   ```yaml
   version: '3.8'
   services:
@@ -102,7 +102,7 @@ docker-compose -v
 1. Navegue até o diretório onde está localizado o `docker-compose.yml`:
 
    ```bash
-   cd G:\TesteZucchetti\Zucchetti-BackEnd
+   cd seu-diretorio\TesteZucchetti\Zucchetti-BackEnd
    ```
 
 2. Execute o seguinte comando para construir e iniciar o serviço de banco de dados:
@@ -116,7 +116,7 @@ docker-compose -v
 ### Dicas Úteis
 
 - Para parar o banco de dados, use o comando `docker-compose down`.
-- Se precisar limpar os dados e começar de novo, remova o volume com o comando `docker volume rm G:\TesteZucchetti\Zucchetti-BackEnd_postgres_data`.
+- Se precisar limpar os dados e começar de novo, remova o volume com o comando `docker volume rm  seu-diretorio\TesteZucchetti\Zucchetti-BackEnd_postgres_data`.
 - Para conectar-se ao banco de dados usando um cliente como o DBeaver, utilize as seguintes informações:
   - **Host**: `localhost`
   - **Porta**: `5432`
@@ -186,7 +186,7 @@ Para configurar o banco de dados com dados iniciais:
 - Navegue até o diretório de scripts:
 
   ```bash
-  cd \TesteZucchetti\Zucchetti-BackEnd\src\scripts
+  cd  seu-diretorio\TesteZucchetti\Zucchetti-BackEnd\src\scripts
   ```
 
 - Execute o arquivo `run_seeds.php`:
