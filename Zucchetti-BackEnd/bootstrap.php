@@ -1,5 +1,4 @@
 <?php
-// bootstrap.php
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMSetup;
@@ -7,32 +6,87 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 require_once "vendor/autoload.php";
 
-// Configurações para ambiente de desenvolvimento
+if (php_sapi_name() !== 'cli') {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        header('HTTP/1.1 204 No Content');
+        exit;
+    }
+}
+
 $isDevMode = true;
 
-// Configuração usando atributos de metadados
 $config = ORMSetup::createAttributeMetadataConfiguration(
     [__DIR__ . "/src"], 
     $isDevMode
 );
 
-// Configurações de conexão para PostgreSQL
+$cache = new FilesystemAdapter('', 0, __DIR__ . '/src/Service/cache');
+
+$config->setMetadataCache($cache);
+$config->setQueryCache($cache); 
+$config->setResultCache($cache); 
+
 $conn = DriverManager::getConnection([
-    'driver'   => 'pdo_pgsql',  // Driver do PostgreSQL
-    'host'     => 'localhost',  // ou o endereço IP do servidor PostgreSQL
-    'port'     => '5432',       // Porta padrão do PostgreSQL
-    'dbname'   => 'DBZucchetti', // Nome do banco de dados
-    'user'     => 'admin',     // Nome do usuário
-    'password' => 'admin', // Senha do usuário
+    'driver'   => 'pdo_pgsql',
+    'host'     => 'localhost',
+    'port'     => '5432',
+    'dbname'   => 'DBZucchetti',
+    'user'     => 'admin',
+    'password' => 'admin',
 ], $config);
 
-// Criando o EntityManager com a conexão configurada
 $entityManager = new EntityManager($conn, $config);
 
-// Configuração das Migrations
+$conn = DriverManager::getConnection([
+    'driver'   => 'pdo_pgsql',
+    'host'     => 'localhost',
+    'port'     => '5432', 
+    'dbname'   => 'DBZucchetti',
+    'user'     => 'admin',
+    'password' => 'admin',
+], $config);
+
+$entityManager = new EntityManager($conn, $config);
+
 $migrationsConfig = new PhpFile(__DIR__ . '/migrations.php');
 $entityManagerLoader = new ExistingEntityManager($entityManager);
 $dependencyFactory = DependencyFactory::fromEntityManager($migrationsConfig, $entityManagerLoader);
+
+function GetEntityManager(): EntityManager {
+    global $entityManager;
+    return $entityManager;
+}
+
+set_exception_handler(function ($exception) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Unexpected error occurred: ' . $exception->getMessage()]);
+    exit;
+});
+
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+register_shutdown_function(function () {
+    $error = error_get_last();
+    if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Fatal error: ' . $error['message']]);
+        exit;
+    }
+});
+
+return $entityManager;
