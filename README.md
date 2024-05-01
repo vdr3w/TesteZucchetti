@@ -2,7 +2,7 @@
 
 # Teste Zucchetti - André Vieira
 
-Bem-vindo ao meu projeto Teste Zucchetti! Abaixo você encontrará instruções detalhadas sobre como configurar e executar tanto o frontend quanto o backend deste projeto. 
+Bem-vindo ao meu projeto! Abaixo você encontrará instruções detalhadas sobre como configurar e executar tanto o frontend quanto o backend deste projeto. 
 
 Inicialmente, apresentarei um aviso sobre minha tentativa de dockerização da aplicação. 
 
