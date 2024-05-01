@@ -26,7 +26,8 @@
 ## Páginas do Projeto
 
 ### 📍 Página de Clientes
-![LOGIN](https://github.com/vdr3w/projeto-devinhouse-m1/assets/84882983/802178e5-87c2-437c-bd59-18e2a1661ab7)
+![TELA CLIENTES](https://i.imgur.com/KTN8lX9.png)
+![MODAL CLIENTES](https://i.imgur.com/0cz57xj.png)
 
 
 Permite que os usuários vejam a listagem de todos os clientes do sistema.
@@ -38,7 +39,8 @@ Permite que os usuários vejam a listagem de todos os clientes do sistema.
 ---
 
 ### 📍 Página de Produtos
-![CADASTRO USUARIO](https://github.com/vdr3w/projeto-devinhouse-m1/assets/84882983/ee6cf488-8f3d-4860-a8dd-6e0c09ad710a)
+![TELA PRODUTOS](https://i.imgur.com/bwTKZ1G.png)
+![MODAL PRODUTOS](https://i.imgur.com/VgvUqPR.png)
 
 
 Permite que os usuários vejam a listagem de todos os produtos do sistema.
@@ -50,7 +52,8 @@ Permite que os usuários vejam a listagem de todos os produtos do sistema.
 ---
 
 ### 📍 Página de Métodos de Pagamento
-![DASHBOARD](https://github.com/vdr3w/projeto-devinhouse-m1/assets/84882983/c99f2af8-a720-4f20-bdf4-2dc398ecf57c)
+![TELA CLIENTES](https://i.imgur.com/KTN8lX9.png)
+![MODAL CLIENTES](https://i.imgur.com/0cz57xj.png)
 
 
 Permite que os usuários vejam a listagem de todos os métodos de pagamento do sistema.
@@ -62,7 +65,8 @@ Permite que os usuários vejam a listagem de todos os métodos de pagamento do s
 ---
 
 ### 📍 Página de Venda
-![GERENCIAMENTO ALUNO](https://github.com/vdr3w/projeto-devinhouse-m1/assets/84882983/00301d63-0b58-46ab-83bc-ead9a48e3f51)
+![TELA CLIENTES](https://i.imgur.com/KTN8lX9.png)
+![MODAL CLIENTES](https://i.imgur.com/0cz57xj.png)
 
 Permite que os usuários vejam a listagem de todos os métodos de pagamento do sistema.
 - 🔰 Tabela: Contém campos para email e senha, juntamente com um botão de edição e de deleção.
