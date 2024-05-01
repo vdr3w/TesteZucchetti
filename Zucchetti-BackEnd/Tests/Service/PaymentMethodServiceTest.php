@@ -26,7 +26,7 @@ class PaymentMethodServiceTest extends TestCase
                 $reflectionClass = new \ReflectionClass($paymentMethod);
                 $idProperty = $reflectionClass->getProperty('id');
                 $idProperty->setAccessible(true);
-                $idProperty->setValue($paymentMethod, 1);  // Simulate setting an ID
+                $idProperty->setValue($paymentMethod, 1);
                 return $paymentMethod->getName() === 'Credit Card' && $paymentMethod->getInstallments() == 12;
             }));
 

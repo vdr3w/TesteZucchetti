@@ -3,13 +3,13 @@
 namespace MyProject\Controller;
 
 use MyProject\Service\ProductService;
-use MyProject\Interface\ProductServiceInterface;  // Usando a interface ao invés da classe concreta.
+use MyProject\Interface\ProductServiceInterface;
 
 
 class ProductController {
     private $productService;
 
-    public function __construct(ProductServiceInterface $productService) {  // Injeção da interface
+    public function __construct(ProductServiceInterface $productService) {
         $this->productService = $productService;
     }
 

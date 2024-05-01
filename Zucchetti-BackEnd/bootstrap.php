@@ -1,5 +1,4 @@
 <?php
-// bootstrap.php
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMSetup;

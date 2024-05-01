@@ -33,7 +33,7 @@ class CustomerService implements CustomerServiceInterface {
         try {
             $this->entityManager->persist($customer);
             $this->entityManager->flush();
-            $this->cache->delete('customer_list_cache'); // Clear cache
+            $this->cache->delete('customer_list_cache');
 
             return ['httpCode' => 201, 'body' => json_encode(['success' => true, 'message' => 'Cliente criado com sucesso com ID ' . $customer->getId()])];
         } catch (\Exception $e) {
@@ -46,7 +46,7 @@ class CustomerService implements CustomerServiceInterface {
         $cacheKey = 'customer_list_cache';
 
         $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) {
-            $item->expiresAfter(3600); // Cache duration
+            $item->expiresAfter(3600);
             $customers = $this->entityManager->getRepository(Customer::class)->findAll();
             $customerList = [];
             foreach ($customers as $customer) {
@@ -66,10 +66,10 @@ class CustomerService implements CustomerServiceInterface {
     }
 
     public function showCustomer(int $id): array {
-        $cacheKey = "customer_$id"; // Specific cache for each customer
+        $cacheKey = "customer_$id";
 
         $cachedData = $this->cache->get($cacheKey, function (ItemInterface $item) use ($id) {
-            $item->expiresAfter(3600); // Cache duration
+            $item->expiresAfter(3600);
             $customer = $this->entityManager->find(Customer::class, $id);
             if (!$customer) {
                 return ['httpCode' => 404, 'body' => json_encode(['success' => false, 'error' => 'Cliente não encontrado.'])];

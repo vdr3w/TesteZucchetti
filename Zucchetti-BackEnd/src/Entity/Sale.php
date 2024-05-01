@@ -23,7 +23,7 @@ class Sale
         joinColumns: [new ORM\JoinColumn(name: "sale_id", referencedColumnName: "id")],
         inverseJoinColumns: [new ORM\JoinColumn(name: "product_id", referencedColumnName: "id")]
     )]
-    private $products;  // Coleção de produtos
+    private $products;
 
     #[ORM\OneToMany(targetEntity: "SaleItem", mappedBy: "sale", cascade: ["persist"])]
     private $items;
