@@ -1,3 +1,4 @@
+![Zucchetti](https://www.zucchettibrasil.com.br/templates/website/img/logo.png)
 # Zucchetti-BackEnd
  
 # Documentação da API de Gerenciamento de Produtos e Vendas 🛍️
