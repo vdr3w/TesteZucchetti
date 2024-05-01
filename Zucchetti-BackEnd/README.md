@@ -1,14 +1,16 @@
 ![Zucchetti](https://www.zucchettibrasil.com.br/templates/website/img/logo.png)
 # Zucchetti-BackEnd
- 
-# Documentação da API de Gerenciamento de Produtos e Vendas 🛍️
 
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-</br>
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Composer](https://img.shields.io/badge/Composer-885630?style=for-the-badge&logo=composer&logoColor=white)
+![Apache](https://img.shields.io/badge/Apache-D22128?style=for-the-badge&logo=apache&logoColor=white)
+![REST API](https://img.shields.io/badge/REST%20API-009688?style=for-the-badge&logo=rest&logoColor=white)
 ![Doctrine ORM](https://img.shields.io/badge/Doctrine-ORM-blue.svg)
 ![Made with Love in Brazil](https://img.shields.io/badge/Made%20with-Love%20in%20Brazil-green)
-</br>
+ 
+# Documentação da API de Gerenciamento de Produtos e Vendas 🛍️
 
 Esta documentação cobre os endpoints disponíveis para gerenciar produtos, clientes, métodos de pagamento e vendas, detalhando métodos, parâmetros necessários e exemplos de respostas.
 </br>
