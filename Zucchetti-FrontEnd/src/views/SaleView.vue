@@ -161,7 +161,7 @@ export default {
           })
           .catch((error) => {
             console.error('Error fetching sales by customer:', error)
-            alert('Falha ao carregar vendas para o cliente selecionado.')
+            alert('Nenhuma venda encontrada para o cliente especificado.')
           })
       } else {
         this.fetchSales()

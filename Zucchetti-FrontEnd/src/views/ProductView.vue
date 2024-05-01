@@ -6,7 +6,7 @@
       <div class="search-section">
         <input
           type="text"
-          placeholder="PESQUISE POR NOME, ID OU QUANTIDADE"
+          placeholder="PESQUISE POR 'NOME' OU 'QUANTIDADE(maiorQue)'"
           v-model="searchQuery"
           class="search-input"
         />
@@ -96,14 +96,10 @@ export default {
   },
   computed: {
     filteredProducts() {
-      return this.products
-        .filter(
-          (product) =>
-            product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            product.quantity >= parseInt(this.searchQuery) ||
-            isNaN(parseInt(this.searchQuery))
-        )
-        .sort((a, b) => a.id - b.id)
+      return this.products.filter(product => 
+        product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        product.quantity.toString().includes(this.searchQuery)
+      ).sort((a, b) => a.id - b.id);
     }
   }
 }
